@@ -1,4 +1,4 @@
-# AXGF — Ancestral Exchange and Genealogy Format
+# AXGF — Axiom Genealogy Format
 ## Specification Version 1.0
 **Status**: Draft for Public Review  
 **Date**: June 2026  
@@ -12,7 +12,7 @@
 
 ## Abstract
 
-AXGF (Ancestral Exchange and Genealogy Format) is an open specification for the exchange, storage, and preservation of genealogical data. It is designed to overcome the fundamental limitations of GEDCOM — the prevailing genealogy interchange format created in the 1980s — by providing a modern, JSON-native, multilingual, AI-readable, and document-embedding format that models genealogical reality with precision and cultural sensitivity.
+AXGF (Axiom Genealogy Format) is an open specification for the exchange, storage, and preservation of genealogical data. It is designed to overcome the fundamental limitations of GEDCOM — the prevailing genealogy interchange format created in the 1980s — by providing a modern, JSON-native, multilingual, AI-readable, and document-embedding format that models genealogical reality with precision and cultural sensitivity.
 
 AXGF is structured around **Philosophy C**: four independent first-class entities (Person, Family, Event, Link) plus supporting structures (Occupation, Source, Place, Document), connected by typed relationships with confidence scores, temporal validity, and cultural context.
 
