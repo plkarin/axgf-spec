@@ -1,6 +1,6 @@
 <div align="center">
 
-# AXGF — Ancestral Exchange and Genealogy Format
+# AXGF — Axiom Genealogy Format
 
 **The open genealogy data standard for the modern era**
 
