@@ -4,7 +4,7 @@
 **Date**: June 2026  
 **Authors**: Karin Pierre-Léonard (ax-genealogy project)  
 **License**: Creative Commons CC0 1.0 Universal (public domain)  
-**Repository**: https://gitlab.com/leonardkarin/axgf-spec  
+**Repository**: https://gitlab.com/plkarin/axgf-spec  
 **MIME Type**: `application/vnd.axgf+zip`  
 **File Extension**: `.axgf`
 
@@ -1295,4 +1295,4 @@ Genealogical data is inherently uncertain. A format that does not model uncertai
 
 *AXGF Specification 1.0 — June 2026*  
 *Released under Creative Commons CC0 1.0 Universal*  
-*https://gitlab.com/leonardkarin/axgf-spec*
+*https://gitlab.com/plkarin/axgf-spec*
