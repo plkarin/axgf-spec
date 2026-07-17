@@ -223,14 +223,14 @@ python tools/validate.py my-family.axgf
 
 AXGF is an open standard. All contributions are welcome.
 
-- 💬 **Discuss** — [GitLab Issues](https://gitlab.com/leonardkarin/axgf-spec/-/issues)
+- 💬 **Discuss** — [GitLab Issues](https://gitlab.com/plkarin/axgf-spec/-/issues)
 - 🐛 **Report a spec ambiguity** — open an issue with label `spec-clarification`
 - 📝 **Propose a change** — open a Merge Request against `main`
 - 🌍 **Internationalization gaps** — open an issue with label `i18n`
 
 ### Governance
 
-AXGF 1.0 is authored by Karin Pierre-Léonard as part of the [ax-genealogy](https://gitlab.com/leonardkarin/ax-genealogy) project. Community governance model to be defined before version 2.0.
+AXGF 1.0 is authored by Karin Pierre-Léonard as part of the [ax-genealogy](https://gitlab.com/plkarin/ax-genealogy) project. Community governance model to be defined before version 2.0.
 
 ---
 
@@ -238,7 +238,7 @@ AXGF 1.0 is authored by Karin Pierre-Léonard as part of the [ax-genealogy](http
 
 | Project | Language | Status |
 |---|---|---|
-| [ax-genealogy](https://gitlab.com/leonardkarin/ax-genealogy) | Rust + React | Reference implementation |
+| [ax-genealogy](https://gitlab.com/plkarin/ax-genealogy) | Rust + React | Reference implementation |
 | *Your project here* | — | Open a PR to list yours |
 
 ---
@@ -267,6 +267,6 @@ SPDX-License-Identifier: CC0-1.0
 
 **AXGF — Ancestral Exchange and Genealogy Format**  
 *Specification v1.0 · June 2026*  
-*https://gitlab.com/leonardkarin/axgf-spec*
+*https://gitlab.com/plkarin/axgf-spec*
 
 </div>
