@@ -265,7 +265,7 @@ SPDX-License-Identifier: CC0-1.0
 
 <div align="center">
 
-**AXGF — Ancestral Exchange and Genealogy Format**  
+**AXGF — Axiom and Genealogy Format**  
 *Specification v1.0 · June 2026*  
 *https://gitlab.com/plkarin/axgf-spec*
 
