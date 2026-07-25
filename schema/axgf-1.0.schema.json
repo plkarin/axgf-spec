@@ -187,22 +187,7 @@
         "tags":          { "type": "array", "items": { "type": "string" } },
         "extensions":    { "type": "object" }
       }
-    }
-  },
-
-  "oneOf": [
-    { "$ref": "#/$defs/manifest" },
-    { "$ref": "#/$defs/person" },
-    { "$ref": "#/$defs/family" },
-    { "$ref": "#/$defs/event" },
-    { "$ref": "#/$defs/link" },
-    { "$ref": "#/$defs/occupation" },
-    { "$ref": "#/$defs/source" },
-    { "$ref": "#/$defs/place" },
-    { "$ref": "#/$defs/document" }
-  ],
-
-  "$defs": {
+    },
 
     "manifest": {
       "type": "object",
@@ -751,6 +736,17 @@
       },
       "required": ["filename", "mime_type", "document_type", "status"]
     }
+  },
 
-  }
+  "oneOf": [
+    { "$ref": "#/$defs/manifest" },
+    { "$ref": "#/$defs/person" },
+    { "$ref": "#/$defs/family" },
+    { "$ref": "#/$defs/event" },
+    { "$ref": "#/$defs/link" },
+    { "$ref": "#/$defs/occupation" },
+    { "$ref": "#/$defs/source" },
+    { "$ref": "#/$defs/place" },
+    { "$ref": "#/$defs/document" }
+  ]
 }
