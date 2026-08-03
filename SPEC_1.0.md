@@ -399,7 +399,12 @@ A valid person with no known information:
 
 ### 4.2 Family
 
-A Family is a structural entity grouping persons in a recognized union with or without children. It exists independently of its members and can have its own documents, events, and history.
+A Family is a structural entity grouping persons in a recognized union and/or their children. It exists independently of its members and can have its own documents, events, and history. A family can exist without all of its members being known: `union` and `children` are both individually optional, but at least one of them MUST be present — an entirely empty family carries no information and is not valid.
+
+Two shapes are common:
+
+- **union + children** — the fully specified family (see the worked example below).
+- **children only** — a *sibling group*: children whose parents are unknown. GEDCOM permits this via a `FAM` record with only `CHIL` entries, and researchers frequently encounter it (foundlings, imported branches, orphan clusters). Emit the family without a `union`; a later discovery of the parents is added via `update_entity` (full replace: read the family, add the `union` block, send it back). See §4.2.3 for the sibling-group example.
 
 ```json
 {
@@ -487,6 +492,26 @@ A Family is a structural entity grouping persons in a recognized union with or w
   "children": []
 }
 ```
+
+#### 4.2.3 Sibling Group (Parents Unknown)
+
+A family whose parents are unknown — four siblings from the same household, an orphan cluster, or an imported branch cut off at the top — is expressed by omitting `union` entirely and listing the children. `union` is optional; do not emit `"union": { "persons": [] }`, which asserts a union of zero persons and is semantically false.
+
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440042",
+  "type": "family",
+  "axgf_version": "1.0",
+  "children": [
+    { "person_id": "uuid-sibling-1", "birth_order": 1 },
+    { "person_id": "uuid-sibling-2", "birth_order": 2 },
+    { "person_id": "uuid-sibling-3", "birth_order": 3 },
+    { "person_id": "uuid-sibling-4", "birth_order": 4 }
+  ]
+}
+```
+
+When the parents are later discovered, add the `union` block via `update_entity`: read the existing family, add the union to it, send the merged object back. Do not construct a fresh family object — a full-replace update would silently drop the children.
 
 ---
 
@@ -1213,7 +1238,7 @@ Every bundle MUST include `schema/axgf-1.0.schema.json`. Conformant parsers SHOU
 ### 12.2 Mandatory Fields
 
 **Person**: `id`, `type`, `axgf_version`, `identity.name.display`, `identity.gender`, `identity.is_living`  
-**Family**: `id`, `type`, `axgf_version`, `union.type`, `union.persons`  
+**Family**: `id`, `type`, `axgf_version`, and at least one of `union` or `children` (both optional individually; if `union` is present it MUST have `union.type` and `union.persons` with at least one person). See §4.2.3 for the sibling-group case.  
 **Event**: `id`, `type`, `axgf_version`, `category`, `date`  
 **Link**: `id`, `type`, `axgf_version`, `from`, `to`, `label`  
 **Manifest**: `axgf`, `created_at`, `stats`

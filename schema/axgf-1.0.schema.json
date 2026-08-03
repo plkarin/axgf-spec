@@ -400,7 +400,10 @@
           }
         }
       },
-      "required": ["union"]
+      "anyOf": [
+        { "required": ["union"] },
+        { "required": ["children"] }
+      ]
     },
 
     "event": {
