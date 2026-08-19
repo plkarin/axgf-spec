@@ -4,15 +4,15 @@
 
 **The open genealogy data standard for the modern era**
 
-[![Version](https://img.shields.io/badge/version-1.0-667eea?style=flat-square)](https://gitlab.com/leonardkarin/axgf-spec)
+[![Version](https://img.shields.io/badge/version-1.0-667eea?style=flat-square)](https://github.com/plkarin/axgf-spec)
 [![License](https://img.shields.io/badge/license-CC0_1.0-43d9a2?style=flat-square)](https://creativecommons.org/publicdomain/zero/1.0/)
-[![Status](https://img.shields.io/badge/status-draft_for_review-ffd93d?style=flat-square)](https://gitlab.com/leonardkarin/axgf-spec/-/issues)
-[![Format](https://img.shields.io/badge/format-JSON_%2B_ZIP-764ba2?style=flat-square)](https://gitlab.com/leonardkarin/axgf-spec/blob/main/schema/axgf-1.0.schema.json)
+[![Status](https://img.shields.io/badge/status-draft_for_review-ffd93d?style=flat-square)](https://github.com/plkarin/axgf-spec/issues)
+[![Format](https://img.shields.io/badge/format-JSON_%2B_ZIP-764ba2?style=flat-square)](https://github.com/plkarin/axgf-spec/blob/main/schema/axgf-1.0.schema.json)
 
 *GEDCOM was designed in 1984 for floppy disk exchange.*  
 *AXGF is designed for 2026 — JSON-native, AI-readable, multilingual, document-embedding.*
 
-[Specification →](./SPEC_1.0.md) · [JSON Schema →](./schema/axgf-1.0.schema.json) · [Examples →](./examples/) · [Discuss →](https://gitlab.com/leonardkarin/axgf-spec/-/issues)
+[Specification →](./SPEC_1.0.md) · [JSON Schema →](./schema/axgf-1.0.schema.json) · [Examples →](./examples/) · [Discuss →](https://github.com/plkarin/axgf-spec/issues)
 
 </div>
 
@@ -187,10 +187,21 @@ family.axgf  (ZIP)
 
 ## Validate a bundle
 
+The reference library ships an `axgf` binary that runs the JSON Schema *and*
+the semantic checks (dangling references, cycles, chronology):
+
 ```bash
-pip install jsonschema
-python tools/validate.py my-family.axgf
+cargo install axgf-rs
+axgf validate my-family.axgf
 ```
+
+To check a single entity file against the schema alone, any JSON Schema
+draft 2020-12 validator will do — see [`examples/`](./examples/) for a
+ready-to-run snippet.
+
+The [`tools/`](./tools/) directory holds the converters that produce a bundle
+in the first place: `gedcom2axgf.py` (GEDCOM 5.5.1 files) and
+`webtrees2axgf.py` (a live webtrees database, media bytes included).
 
 ---
 
@@ -223,14 +234,20 @@ python tools/validate.py my-family.axgf
 
 AXGF is an open standard. All contributions are welcome.
 
-- 💬 **Discuss** — [GitLab Issues](https://gitlab.com/plkarin/axgf-spec/-/issues)
+- 💬 **Discuss** — [GitHub Issues](https://github.com/plkarin/axgf-spec/issues)
 - 🐛 **Report a spec ambiguity** — open an issue with label `spec-clarification`
-- 📝 **Propose a change** — open a Merge Request against `main`
+- 📝 **Propose a change** — open a Pull Request against `main`
 - 🌍 **Internationalization gaps** — open an issue with label `i18n`
 
 ### Governance
 
-AXGF 1.0 is authored by Karin Pierre-Léonard as part of the [ax-genealogy](https://gitlab.com/plkarin/ax-genealogy) project. Community governance model to be defined before version 2.0.
+AXGF 1.0 is authored by Karin Pierre-Léonard and maintained in this repository, which is the authority for the format. The specification comes first; the code follows it:
+
+- **[axgf-spec](https://github.com/plkarin/axgf-spec)** (here) — the standard and its JSON Schema. Where an implementation and this document disagree, this document wins and the implementation is the bug.
+- **[axgf-lib](https://github.com/plkarin/axgf-lib)** — implements the spec as the reference library.
+- **[axgf-cms](https://github.com/plkarin/axgf-cms)** — consumes the library as a reference application.
+
+Changes to the format are made here first and only then implemented downstream. Community governance model to be defined before version 2.0.
 
 ---
 
@@ -238,7 +255,8 @@ AXGF 1.0 is authored by Karin Pierre-Léonard as part of the [ax-genealogy](http
 
 | Project | Language | Status |
 |---|---|---|
-| [ax-genealogy](https://gitlab.com/plkarin/ax-genealogy) | Rust + React | Reference implementation |
+| [axgf-lib](https://github.com/plkarin/axgf-lib) | Rust | Reference library — published on crates.io as [`axgf-rs`](https://crates.io/crates/axgf-rs) |
+| [axgf-cms](https://github.com/plkarin/axgf-cms) | Rust | Reference web application |
 | *Your project here* | — | Open a PR to list yours |
 
 ---
@@ -265,8 +283,8 @@ SPDX-License-Identifier: CC0-1.0
 
 <div align="center">
 
-**AXGF — Axiom and Genealogy Format**  
+**AXGF — Axiom Genealogy Format**  
 *Specification v1.0 · June 2026*  
-*https://gitlab.com/plkarin/axgf-spec*
+*https://github.com/plkarin/axgf-spec*
 
 </div>

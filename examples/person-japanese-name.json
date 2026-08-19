@@ -1,0 +1,28 @@
+{
+  "id": "550e8400-e29b-41d4-a716-446655440002",
+  "type": "person",
+  "axgf_version": "1.0",
+  "created_at": "2026-06-15T10:00:00Z",
+  "updated_at": "2026-06-15T10:00:00Z",
+  "version_num": 1,
+  "identity": {
+    "name": {
+      "display": "田中一郎",
+      "display_latin": "Ichiro Tanaka",
+      "culture": "ja",
+      "direction": "ltr",
+      "display_order": "family_first",
+      "reading": "たなか いちろう",
+      "reading_system": "hiragana",
+      "components": [
+        { "type": "family_name", "value": "田中", "value_latin": "Tanaka",
+          "reading": "たなか", "reading_system": "hiragana", "order": 1 },
+        { "type": "given_name",  "value": "一郎", "value_latin": "Ichiro",
+          "reading": "いちろう", "reading_system": "hiragana", "order": 2 }
+      ]
+    },
+    "gender":     { "value": "M" },
+    "is_living":  false,
+    "visibility": "members"
+  }
+}

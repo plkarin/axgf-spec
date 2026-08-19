@@ -1,0 +1,25 @@
+{
+  "id": "550e8400-e29b-41d4-a716-446655440003",
+  "type": "person",
+  "axgf_version": "1.0",
+  "created_at": "2026-06-15T10:00:00Z",
+  "updated_at": "2026-06-15T10:00:00Z",
+  "version_num": 1,
+  "identity": {
+    "name": {
+      "display": "יוסף בן-דוד כהן",
+      "display_latin": "Yosef ben-David Cohen",
+      "culture": "he",
+      "direction": "rtl",
+      "components": [
+        { "type": "given_name",  "value": "יוסף",   "value_latin": "Yosef",     "order": 1 },
+        { "type": "patronymic",  "value": "בן-דוד", "value_latin": "ben-David", "order": 2,
+          "derivation_type": "patronymic" },
+        { "type": "family_name", "value": "כהן",    "value_latin": "Cohen",     "order": 3 }
+      ]
+    },
+    "gender":     { "value": "M" },
+    "is_living":  false,
+    "visibility": "members"
+  }
+}
