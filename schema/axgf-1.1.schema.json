@@ -1,0 +1,3287 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://axgf.org/schema/1.1/axgf.schema.json",
+  "title": "AXGF 1.1 Schema",
+  "description": "JSON Schema for the Axiom Genealogy Format v1.1 (draft). A superset of 1.0: every entity valid against axgf-1.0.schema.json is valid here. Attribute schemas carry two annotations validators ignore: x-axgf-class, the sensitive class (SPEC_1.1 §4), and x-axgf-unit.",
+  "version": "1.1.0-draft",
+  "$defs": {
+    "uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "description": "Lowercase UUID v4"
+    },
+    "iso8601": {
+      "type": "string",
+      "pattern": "^[0-9]{4}(-[0-9]{2}(-[0-9]{2}(T[0-9]{2}:[0-9]{2}:[0-9]{2}(Z|[+-][0-9]{2}:[0-9]{2})?)?)?)?$",
+      "description": "ISO 8601 datetime or partial date"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Confidence score 0.0 (uncertain) to 1.0 (certain)"
+    },
+    "spec_version": {"type": "string", "enum": ["1.0", "1.1"], "description": "An AXGF specification version."},
+    "bcp47_lang": {
+      "type": "string",
+      "pattern": "^[a-z]{2,3}(-[A-Z]{2,3})?$",
+      "description": "BCP 47 language code"
+    },
+    "visibility": {"type": "string", "enum": ["public", "members", "contributors", "private"]},
+    "text_direction": {"type": "string", "enum": ["ltr", "rtl"]},
+    "calendar": {
+      "type": "string",
+      "enum": [
+        "gregorian", "julian", "hebrew", "hijri", "persian", "chinese", "ethiopian",
+        "japanese_era", "republican_french", "roman"
+      ]
+    },
+    "date_precision": {
+      "type": "string",
+      "enum": ["exact", "month", "year", "decade", "quarter_century", "century", "unknown"]
+    },
+    "axgf_date": {
+      "type": "object",
+      "properties": {
+        "value": {"$ref": "#/$defs/iso8601"},
+        "calendar": {"$ref": "#/$defs/calendar", "default": "gregorian"},
+        "precision": {"$ref": "#/$defs/date_precision"},
+        "circa": {"type": "boolean", "default": false},
+        "confidence": {"$ref": "#/$defs/confidence"},
+        "note": {"type": ["string", "null"]},
+        "alternatives": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "value": {"type": "string"},
+              "calendar": {"$ref": "#/$defs/calendar"},
+              "era": {"type": "string"},
+              "era_year": {"type": "integer"}
+            },
+            "required": ["value", "calendar"]
+          }
+        },
+        "range": {
+          "type": ["object", "null"],
+          "properties": {
+            "earliest": {"$ref": "#/$defs/axgf_date"},
+            "latest": {"$ref": "#/$defs/axgf_date"},
+            "note": {"type": "string"}
+          }
+        }
+      }
+    },
+    "name_component_type": {
+      "type": "string",
+      "enum": [
+        "given_name", "family_name", "patronymic", "matronymic", "nasab", "laqab", "kunya",
+        "nisbah", "nickname", "alias", "religious_name", "pen_name"
+      ]
+    },
+    "name_component": {
+      "type": "object",
+      "required": ["type", "value", "order"],
+      "properties": {
+        "type": {"$ref": "#/$defs/name_component_type"},
+        "value": {"type": "string", "minLength": 1},
+        "value_latin": {"type": ["string", "null"]},
+        "reading": {"type": ["string", "null"]},
+        "reading_system": {
+          "type": ["string", "null"],
+          "enum": ["hiragana", "katakana", "pinyin", "jyutping", "ipa", "revised_romanization", null]
+        },
+        "order": {"type": "integer", "minimum": 1},
+        "derived_from": {"$ref": "#/$defs/uuid"},
+        "derivation_type": {"type": ["string", "null"], "enum": ["patronymic", "matronymic", null]}
+      }
+    },
+    "axgf_name": {
+      "type": "object",
+      "required": ["display", "components"],
+      "properties": {
+        "display": {"type": "string", "minLength": 1},
+        "display_latin": {"type": ["string", "null"]},
+        "culture": {"$ref": "#/$defs/bcp47_lang"},
+        "direction": {"$ref": "#/$defs/text_direction"},
+        "display_order": {"type": "string", "enum": ["given_first", "family_first"]},
+        "reading": {"type": ["string", "null"]},
+        "reading_system": {"type": ["string", "null"]},
+        "components": {"type": "array", "items": {"$ref": "#/$defs/name_component"}}
+      }
+    },
+    "document_link": {
+      "type": "object",
+      "required": ["document_id"],
+      "properties": {
+        "document_id": {"$ref": "#/$defs/uuid"},
+        "role": {"type": "string"},
+        "note": {"type": ["string", "null"]},
+        "date": {"type": ["string", "null"]}
+      }
+    },
+    "entity_ref": {
+      "type": "object",
+      "required": ["entity_type", "entity_id"],
+      "properties": {
+        "entity_type": {"type": "string", "enum": ["person", "family", "event", "link", "source"]},
+        "entity_id": {"$ref": "#/$defs/uuid"},
+        "role": {"type": "string"},
+        "confidence": {"$ref": "#/$defs/confidence"}
+      }
+    },
+    "ai_hypothesis": {
+      "type": "object",
+      "required": ["id", "claim", "confidence", "status"],
+      "properties": {
+        "id": {"type": "string"},
+        "claim": {"type": "string"},
+        "confidence": {"$ref": "#/$defs/confidence"},
+        "status": {"type": "string", "enum": ["pending", "confirmed", "rejected", "investigating"]},
+        "evidence": {"type": ["string", "null"]},
+        "created_at": {"type": "string"},
+        "reviewed_at": {"type": ["string", "null"]},
+        "reviewed_by": {"type": ["string", "null"]}
+      }
+    },
+    "base_entity": {
+      "type": "object",
+      "required": ["id", "type", "axgf_version"],
+      "properties": {
+        "id": {"$ref": "#/$defs/uuid"},
+        "type": {"type": "string"},
+        "axgf_version": {"$ref": "#/$defs/spec_version"},
+        "created_at": {"type": "string"},
+        "updated_at": {"type": "string"},
+        "version_num": {"type": "integer", "minimum": 1, "default": 1},
+        "created_by": {"type": ["string", "null"]},
+        "tags": {"type": "array", "items": {"type": "string"}},
+        "extensions": {"type": "object"}
+      }
+    },
+    "manifest": {
+      "type": "object",
+      "required": ["axgf", "created_at", "stats"],
+      "properties": {
+        "axgf": {"$ref": "#/$defs/spec_version"},
+        "created_at": {"type": "string"},
+        "updated_at": {"type": "string"},
+        "generator": {
+          "type": "object",
+          "properties": {"name": {"type": "string"}, "version": {"type": "string"}, "url": {"type": "string"}}
+        },
+        "family": {
+          "type": "object",
+          "properties": {
+            "name": {"type": "string"},
+            "description": {"type": ["string", "null"]},
+            "primary_culture": {"type": "string"},
+            "primary_place": {"type": ["string", "null"]},
+            "time_span": {
+              "type": "object",
+              "properties": {"earliest": {"type": "string"}, "latest": {"type": "string"}}
+            }
+          }
+        },
+        "stats": {
+          "type": "object",
+          "required": ["persons"],
+          "properties": {
+            "persons": {"type": "integer", "minimum": 0},
+            "families": {"type": "integer", "minimum": 0},
+            "events": {"type": "integer", "minimum": 0},
+            "links": {"type": "integer", "minimum": 0},
+            "occupations": {"type": "integer", "minimum": 0},
+            "sources": {"type": "integer", "minimum": 0},
+            "places": {"type": "integer", "minimum": 0},
+            "documents": {"type": "integer", "minimum": 0}
+          }
+        },
+        "privacy": {
+          "type": "object",
+          "properties": {
+            "contains_living_persons": {"type": "boolean"},
+            "living_persons_redacted": {"type": "boolean"},
+            "gdpr_compliant": {"type": "boolean"},
+            "withheld_classes": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {"$ref": "#/$defs/sensitive_class"},
+              "description": "1.1: the sensitive classes left out of this bundle when it was written (§4.5)."
+            }
+          }
+        },
+        "license": {
+          "type": "object",
+          "properties": {
+            "type": {"type": "string"},
+            "url": {"type": ["string", "null"]},
+            "note": {"type": ["string", "null"]}
+          }
+        }
+      }
+    },
+    "person": {
+      "allOf": [{"$ref": "#/$defs/base_entity"}],
+      "properties": {
+        "type": {"const": "person"},
+        "identity": {
+          "type": "object",
+          "required": ["name", "gender", "is_living"],
+          "properties": {
+            "name": {"$ref": "#/$defs/axgf_name"},
+            "names": {
+              "type": "array",
+              "items": {
+                "allOf": [{"$ref": "#/$defs/axgf_name"}],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "birth", "married", "alias", "nickname", "transliteration", "religious",
+                      "pen_name", "other"
+                    ]
+                  },
+                  "source_id": {"$ref": "#/$defs/uuid"},
+                  "confidence": {"$ref": "#/$defs/confidence"},
+                  "valid_from": {"type": ["string", "null"]},
+                  "valid_until": {"type": ["string", "null"]},
+                  "note": {"type": ["string", "null"]}
+                }
+              }
+            },
+            "gender": {
+              "type": "object",
+              "required": ["value"],
+              "properties": {
+                "value": {"type": "string", "enum": ["M", "F", "NB", "U"]},
+                "note": {"type": ["string", "null"]}
+              }
+            },
+            "is_living": {"type": "boolean"},
+            "visibility": {"$ref": "#/$defs/visibility"},
+            "titles": {
+              "type": "array",
+              "items": {
+                "allOf": [{"$ref": "#/$defs/claim"}],
+                "properties": {
+                  "value": {
+                    "type": "object",
+                    "required": ["text"],
+                    "properties": {
+                      "text": {"type": "string", "minLength": 1},
+                      "kind": {"$ref": "#/$defs/vocab_title_kind"}
+                    }
+                  }
+                }
+              }
+            },
+            "sex_at_birth": {
+              "allOf": [{"$ref": "#/$defs/claim"}],
+              "properties": {"value": {"$ref": "#/$defs/vocab_sex_at_birth"}}
+            },
+            "gender_identity": {
+              "type": "array",
+              "items": {
+                "allOf": [{"$ref": "#/$defs/claim"}],
+                "properties": {"value": {"$ref": "#/$defs/vocab_gender_identity"}}
+              }
+            },
+            "class_visibility": {
+              "type": "object",
+              "description": "1.1: per-class visibility for this person; may only tighten the default (§4.4).",
+              "propertyNames": {"$ref": "#/$defs/sensitive_class"},
+              "additionalProperties": {"$ref": "#/$defs/visibility"}
+            }
+          }
+        },
+        "birth": {
+          "type": ["object", "null"],
+          "properties": {
+            "date": {"$ref": "#/$defs/axgf_date"},
+            "place_id": {"$ref": "#/$defs/uuid"},
+            "confidence": {"$ref": "#/$defs/confidence"},
+            "source_id": {"$ref": "#/$defs/uuid"},
+            "event_id": {"$ref": "#/$defs/uuid"},
+            "time": {
+              "allOf": [{"$ref": "#/$defs/claim"}],
+              "properties": {"value": {"$ref": "#/$defs/time_of_day"}}
+            },
+            "coordinates": {
+              "allOf": [{"$ref": "#/$defs/claim"}],
+              "properties": {"value": {"$ref": "#/$defs/coordinates"}}
+            }
+          }
+        },
+        "death": {
+          "type": ["object", "null"],
+          "properties": {
+            "date": {"$ref": "#/$defs/axgf_date"},
+            "place_id": {"$ref": "#/$defs/uuid"},
+            "cause": {"x-axgf-class": "health", "type": ["string", "null"]},
+            "confidence": {"$ref": "#/$defs/confidence"},
+            "source_id": {"$ref": "#/$defs/uuid"},
+            "event_id": {"$ref": "#/$defs/uuid"},
+            "time": {
+              "allOf": [{"$ref": "#/$defs/claim"}],
+              "properties": {"value": {"$ref": "#/$defs/time_of_day"}}
+            },
+            "coordinates": {
+              "allOf": [{"$ref": "#/$defs/claim"}],
+              "properties": {"value": {"$ref": "#/$defs/coordinates"}}
+            },
+            "causes": {
+              "x-axgf-class": "health",
+              "type": "array",
+              "items": {
+                "allOf": [{"$ref": "#/$defs/claim"}],
+                "properties": {
+                  "value": {
+                    "type": "object",
+                    "required": ["description"],
+                    "properties": {
+                      "description": {"type": "string", "minLength": 1},
+                      "icd10_chapter": {"$ref": "#/$defs/vocab_icd10_chapter"},
+                      "sequence": {"type": "integer", "minimum": 1, "maximum": 10}
+                    }
+                  }
+                }
+              }
+            },
+            "contributing_factors": {
+              "x-axgf-class": "health",
+              "type": "array",
+              "items": {
+                "allOf": [{"$ref": "#/$defs/claim"}],
+                "properties": {
+                  "value": {
+                    "type": "object",
+                    "required": ["description"],
+                    "properties": {
+                      "description": {"type": "string", "minLength": 1},
+                      "icd10_chapter": {"$ref": "#/$defs/vocab_icd10_chapter"}
+                    }
+                  }
+                }
+              }
+            },
+            "autopsy": {
+              "x-axgf-class": "health",
+              "allOf": [{"$ref": "#/$defs/claim"}],
+              "properties": {
+                "value": {
+                  "type": "object",
+                  "required": ["kind"],
+                  "properties": {
+                    "kind": {"$ref": "#/$defs/vocab_autopsy"},
+                    "findings": {"type": "string", "minLength": 1},
+                    "document_id": {"$ref": "#/$defs/uuid"}
+                  }
+                }
+              }
+            },
+            "disposition": {
+              "type": "array",
+              "items": {
+                "allOf": [{"$ref": "#/$defs/claim"}],
+                "properties": {
+                  "value": {
+                    "type": "object",
+                    "required": ["method"],
+                    "properties": {
+                      "method": {"$ref": "#/$defs/vocab_disposition"},
+                      "place_id": {"$ref": "#/$defs/uuid"}
+                    }
+                  }
+                }
+              }
+            },
+            "grave": {
+              "type": "array",
+              "items": {
+                "allOf": [{"$ref": "#/$defs/claim"}],
+                "properties": {
+                  "value": {
+                    "type": "object",
+                    "properties": {
+                      "coordinates": {"$ref": "#/$defs/coordinates"},
+                      "plot": {"type": "string", "minLength": 1},
+                      "inscription": {"type": "string", "minLength": 1}
+                    },
+                    "anyOf": [{"required": ["coordinates"]}, {"required": ["plot"]}]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "bio": {"type": ["string", "null"]},
+        "notes": {"type": ["string", "null"]},
+        "documents": {"type": "array", "items": {"$ref": "#/$defs/document_link"}},
+        "ai": {
+          "type": ["object", "null"],
+          "properties": {
+            "vault_page": {"type": ["string", "null"]},
+            "embedding_model": {"type": ["string", "null"]},
+            "embedding_updated_at": {"type": ["string", "null"]},
+            "hypotheses": {"type": "array", "items": {"$ref": "#/$defs/ai_hypothesis"}}
+          }
+        },
+        "civil_status": {"$ref": "#/$defs/civil_status"},
+        "morphology": {"$ref": "#/$defs/morphology"},
+        "biometrics": {"$ref": "#/$defs/biometrics"},
+        "health": {"$ref": "#/$defs/health"},
+        "genomics": {"$ref": "#/$defs/genomics"},
+        "residence": {"$ref": "#/$defs/residence"},
+        "education": {"$ref": "#/$defs/education"},
+        "military": {"$ref": "#/$defs/military"},
+        "legal": {"$ref": "#/$defs/legal"},
+        "belief": {"$ref": "#/$defs/belief"},
+        "personality": {"$ref": "#/$defs/personality"},
+        "digital_legacy": {"$ref": "#/$defs/digital_legacy"}
+      },
+      "required": ["identity"]
+    },
+    "family": {
+      "allOf": [{"$ref": "#/$defs/base_entity"}],
+      "properties": {
+        "type": {"const": "family"},
+        "name": {"type": ["string", "null"]},
+        "description": {"type": ["string", "null"]},
+        "union": {
+          "type": "object",
+          "required": ["type", "persons"],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "marriage", "civil_union", "cohabitation", "religious_only", "polygamous",
+                "unknown"
+              ]
+            },
+            "status": {
+              "type": ["string", "null"],
+              "enum": [
+                "active", "ended_by_death", "ended_by_divorce", "ended_by_separation",
+                "annulled", "unknown", null
+              ]
+            },
+            "persons": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "required": ["person_id", "role"],
+                "properties": {"person_id": {"$ref": "#/$defs/uuid"}, "role": {"type": "string"}}
+              }
+            },
+            "start": {
+              "type": ["object", "null"],
+              "properties": {
+                "date": {"$ref": "#/$defs/axgf_date"},
+                "place_id": {"$ref": "#/$defs/uuid"},
+                "event_id": {"$ref": "#/$defs/uuid"}
+              }
+            },
+            "end": {
+              "type": ["object", "null"],
+              "properties": {
+                "date": {"$ref": "#/$defs/axgf_date"},
+                "reason": {"type": ["string", "null"]},
+                "note": {"type": ["string", "null"]}
+              }
+            },
+            "confidence": {"$ref": "#/$defs/confidence"},
+            "source_id": {"$ref": "#/$defs/uuid"}
+          }
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["person_id"],
+            "properties": {
+              "person_id": {"$ref": "#/$defs/uuid"},
+              "birth_order": {"type": ["integer", "null"]},
+              "confidence": {"$ref": "#/$defs/confidence"},
+              "note": {"type": ["string", "null"]},
+              "lineage": {"$ref": "#/$defs/vocab_lineage"}
+            }
+          }
+        },
+        "documents": {"type": "array", "items": {"$ref": "#/$defs/document_link"}},
+        "notes": {"type": ["string", "null"]},
+        "ai": {"type": ["object", "null"], "properties": {"vault_page": {"type": ["string", "null"]}}}
+      },
+      "anyOf": [{"required": ["union"]}, {"required": ["children"]}]
+    },
+    "event": {
+      "allOf": [{"$ref": "#/$defs/base_entity"}],
+      "properties": {
+        "type": {"const": "event"},
+        "category": {
+          "type": "string",
+          "enum": [
+            "birth", "death", "marriage", "divorce", "adoption", "migration", "naturalization",
+            "military", "incarceration", "name_change", "census", "legal", "religious",
+            "social", "historical", "other"
+          ]
+        },
+        "subcategory": {"type": ["string", "null"]},
+        "date": {"$ref": "#/$defs/axgf_date"},
+        "place_id": {"$ref": "#/$defs/uuid"},
+        "participants": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["entity_type", "entity_id", "role"],
+            "properties": {
+              "entity_type": {"type": "string", "enum": ["person", "family", "organization"]},
+              "entity_id": {"$ref": "#/$defs/uuid"},
+              "role": {"type": "string"},
+              "confidence": {"$ref": "#/$defs/confidence"}
+            }
+          }
+        },
+        "description": {"type": ["string", "null"]},
+        "documents": {"type": "array", "items": {"$ref": "#/$defs/document_link"}},
+        "confidence": {"$ref": "#/$defs/confidence"},
+        "source_id": {"$ref": "#/$defs/uuid"},
+        "ai": {"type": ["object", "null"], "properties": {"vault_page": {"type": ["string", "null"]}}}
+      },
+      "required": ["category", "date"]
+    },
+    "link": {
+      "allOf": [{"$ref": "#/$defs/base_entity"}],
+      "properties": {
+        "type": {"const": "link"},
+        "from": {
+          "type": "object",
+          "required": ["entity_type", "entity_id"],
+          "properties": {
+            "entity_type": {"type": "string", "enum": ["person", "family", "event"]},
+            "entity_id": {"$ref": "#/$defs/uuid"}
+          }
+        },
+        "to": {
+          "type": "object",
+          "required": ["entity_type", "entity_id"],
+          "properties": {
+            "entity_type": {"type": "string", "enum": ["person", "family", "event"]},
+            "entity_id": {"$ref": "#/$defs/uuid"}
+          }
+        },
+        "label": {"type": "string", "minLength": 1},
+        "label_reverse": {"type": ["string", "null"]},
+        "category": {
+          "type": ["string", "null"],
+          "enum": [
+            "spiritual", "professional", "social", "legal", "medical", "educational",
+            "conflict", "other", null
+          ]
+        },
+        "bidirectional": {"type": "boolean", "default": false},
+        "valid_from": {
+          "type": ["object", "null"],
+          "properties": {"date": {"$ref": "#/$defs/axgf_date"}, "event_id": {"$ref": "#/$defs/uuid"}}
+        },
+        "valid_until": {
+          "type": ["object", "null"],
+          "properties": {"date": {"$ref": "#/$defs/axgf_date"}, "event_id": {"$ref": "#/$defs/uuid"}}
+        },
+        "confidence": {"$ref": "#/$defs/confidence"},
+        "source_id": {"$ref": "#/$defs/uuid"},
+        "note": {"type": ["string", "null"]},
+        "visibility": {"$ref": "#/$defs/visibility"},
+        "relation": {"$ref": "#/$defs/vocab_link_relation"}
+      },
+      "required": ["from", "to", "label"]
+    },
+    "occupation": {
+      "allOf": [{"$ref": "#/$defs/base_entity"}],
+      "properties": {
+        "type": {"const": "occupation"},
+        "person_id": {"$ref": "#/$defs/uuid"},
+        "title": {"type": "string", "minLength": 1},
+        "title_latin": {"type": ["string", "null"]},
+        "title_normalized": {"type": ["string", "null"]},
+        "employer": {
+          "type": ["object", "null"],
+          "properties": {"name": {"type": "string"}, "place_id": {"$ref": "#/$defs/uuid"}}
+        },
+        "place_id": {"$ref": "#/$defs/uuid"},
+        "valid_from": {"type": ["object", "null"], "properties": {"date": {"$ref": "#/$defs/axgf_date"}}},
+        "valid_until": {"type": ["object", "null"], "properties": {"date": {"$ref": "#/$defs/axgf_date"}}},
+        "confidence": {"$ref": "#/$defs/confidence"},
+        "source_id": {"$ref": "#/$defs/uuid"},
+        "note": {"type": ["string", "null"]},
+        "position": {
+          "type": ["string", "null"],
+          "description": "1.1: the post held, where title is the occupation."
+        }
+      },
+      "required": ["person_id", "title"]
+    },
+    "source": {
+      "allOf": [{"$ref": "#/$defs/base_entity"}],
+      "properties": {
+        "type": {"const": "source"},
+        "title": {"type": "string"},
+        "source_type": {
+          "type": "string",
+          "enum": [
+            "birth_certificate", "death_certificate", "marriage_certificate", "census",
+            "baptism_record", "burial_record", "will", "land_record", "military_record",
+            "immigration_record", "naturalization", "passport", "photograph", "letter",
+            "diary", "newspaper", "oral_tradition", "dna", "family_bible", "gravestone",
+            "published_genealogy", "other"
+          ]
+        },
+        "reliability": {
+          "type": "string",
+          "enum": ["primary", "secondary", "derivative", "authored", "oral", "unknown"]
+        },
+        "confidence": {"$ref": "#/$defs/confidence"},
+        "status": {
+          "type": ["string", "null"],
+          "enum": ["verified", "unverified", "lost", "known_missing", null]
+        },
+        "repository": {
+          "type": ["object", "null"],
+          "properties": {
+            "name": {"type": "string"},
+            "location": {"type": ["string", "null"]},
+            "url": {"type": ["string", "null"]},
+            "reference": {"type": ["string", "null"]}
+          }
+        },
+        "date": {"$ref": "#/$defs/axgf_date"},
+        "place_id": {"$ref": "#/$defs/uuid"},
+        "document_id": {"$ref": "#/$defs/uuid"},
+        "conflicts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["source_id", "field"],
+            "properties": {
+              "source_id": {"$ref": "#/$defs/uuid"},
+              "field": {"type": "string"},
+              "this_value": {"type": "string"},
+              "conflict_value": {"type": "string"},
+              "resolution": {
+                "type": ["string", "null"],
+                "enum": ["this_preferred", "other_preferred", "unresolved", null]
+              },
+              "resolution_note": {"type": ["string", "null"]}
+            }
+          }
+        },
+        "transcription": {"type": ["string", "null"]},
+        "language": {"type": ["string", "null"]},
+        "script": {"type": ["string", "null"]},
+        "dna": {
+          "type": ["object", "null"],
+          "properties": {
+            "test_provider": {"type": "string"},
+            "test_type": {"type": "string", "enum": ["autosomal", "y_dna", "mt_dna", "x_dna"]},
+            "test_date": {"type": ["string", "null"]},
+            "kit_id": {"type": ["string", "null"]},
+            "match": {
+              "type": ["object", "null"],
+              "properties": {
+                "person_id": {"$ref": "#/$defs/uuid"},
+                "shared_cm": {"type": "number"},
+                "shared_percent": {"type": "number"},
+                "predicted_relationship": {"type": "string"},
+                "confidence": {"$ref": "#/$defs/confidence"}
+              }
+            }
+          }
+        },
+        "note": {"type": ["string", "null"]}
+      },
+      "required": ["title", "source_type", "reliability"]
+    },
+    "place": {
+      "allOf": [{"$ref": "#/$defs/base_entity"}],
+      "properties": {
+        "type": {"const": "place"},
+        "names": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["lang", "value"],
+            "properties": {
+              "lang": {"type": "string"},
+              "value": {"type": "string"},
+              "is_primary": {"type": "boolean", "default": false}
+            }
+          }
+        },
+        "place_type": {
+          "type": ["string", "null"],
+          "enum": [
+            "continent", "country", "region", "department", "city", "village", "district",
+            "street", "building", "farm", "island", "historical", "unknown", null
+          ]
+        },
+        "region": {"type": ["string", "null"]},
+        "country_current": {"type": ["string", "null"]},
+        "coordinates": {
+          "type": ["object", "null"],
+          "properties": {
+            "lat": {"type": "number", "minimum": -90, "maximum": 90},
+            "lon": {"type": "number", "minimum": -180, "maximum": 180},
+            "precision": {"type": ["string", "null"]}
+          }
+        },
+        "country_history": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["country"],
+            "properties": {
+              "country": {"type": "string"},
+              "from": {"type": ["string", "null"]},
+              "until": {"type": ["string", "null"]},
+              "note": {"type": ["string", "null"]}
+            }
+          }
+        },
+        "identifiers": {
+          "type": ["object", "null"],
+          "properties": {
+            "wikidata": {"type": "string"},
+            "geonames": {"type": "string"},
+            "insee": {"type": "string"}
+          }
+        },
+        "note": {"type": ["string", "null"]}
+      },
+      "required": ["names"]
+    },
+    "document": {
+      "allOf": [{"$ref": "#/$defs/base_entity"}],
+      "properties": {
+        "type": {"const": "document"},
+        "filename": {"type": "string"},
+        "mime_type": {"type": "string"},
+        "document_type": {
+          "type": "string",
+          "enum": [
+            "photo", "birth_certificate", "death_certificate", "marriage_certificate",
+            "census_page", "baptism_record", "military_record", "will", "land_record",
+            "letter", "diary", "newspaper_clipping", "gravestone_photo", "family_tree_drawing",
+            "audio", "video", "other"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": ["present", "referenced", "known_missing", "lost", "unknown"]
+        },
+        "file": {
+          "type": ["object", "null"],
+          "properties": {
+            "path": {"type": "string"},
+            "size_bytes": {"type": "integer"},
+            "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+          }
+        },
+        "url": {"type": ["string", "null"]},
+        "date": {"$ref": "#/$defs/axgf_date"},
+        "place_id": {"$ref": "#/$defs/uuid"},
+        "language": {"type": ["string", "null"]},
+        "linked_to": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["entity_type", "entity_id"],
+            "properties": {
+              "entity_type": {"type": "string", "enum": ["person", "family", "event", "source"]},
+              "entity_id": {"$ref": "#/$defs/uuid"},
+              "role": {"type": "string"}
+            }
+          }
+        },
+        "ocr": {
+          "type": ["object", "null"],
+          "properties": {
+            "text": {"type": "string"},
+            "confidence": {"$ref": "#/$defs/confidence"},
+            "language": {"type": "string"},
+            "engine": {"type": ["string", "null"]}
+          }
+        },
+        "ai": {
+          "type": ["object", "null"],
+          "properties": {
+            "summary": {"type": ["string", "null"]},
+            "suggested_links": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "entity_type": {"type": "string"},
+                  "entity_id": {"$ref": "#/$defs/uuid"},
+                  "confidence": {"$ref": "#/$defs/confidence"},
+                  "reason": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "caption": {"type": ["string", "null"]},
+        "note": {"type": ["string", "null"]}
+      },
+      "required": ["filename", "mime_type", "document_type", "status"]
+    },
+    "sensitive_class": {"$ref": "#/$defs/vocab_sensitive_class"},
+    "time_of_day": {
+      "type": "string",
+      "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$",
+      "description": "Local time as recorded: HH:MM or HH:MM:SS."
+    },
+    "coordinates": {
+      "type": "object",
+      "required": ["lat", "lon"],
+      "properties": {
+        "lat": {"type": "number", "minimum": -90, "maximum": 90},
+        "lon": {"type": "number", "minimum": -180, "maximum": 180},
+        "precision": {"type": ["string", "null"]}
+      }
+    },
+    "language_tag": {
+      "type": "string",
+      "pattern": "^([a-z]{2,3}(-[A-Z][a-z]{3})?(-([A-Z]{2}|[0-9]{3}))?(-([0-9A-Za-z]{5,8}|[0-9][0-9A-Za-z]{3}))*|und)$",
+      "description": "1.1: a BCP 47 tag with optional script, region and variants; und for undetermined."
+    },
+    "currency_code": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$",
+      "description": "ISO 4217 alphabetic code, current or historic."
+    },
+    "claim_bound": {
+      "type": "object",
+      "properties": {"date": {"$ref": "#/$defs/axgf_date"}, "event_id": {"$ref": "#/$defs/uuid"}}
+    },
+    "claim": {
+      "type": "object",
+      "description": "1.1: one dated, sourced, confidence-bearing claim (§3). Each attribute constrains value.",
+      "required": ["value"],
+      "properties": {
+        "value": {},
+        "date": {"$ref": "#/$defs/axgf_date"},
+        "valid_from": {"$ref": "#/$defs/claim_bound"},
+        "valid_until": {"$ref": "#/$defs/claim_bound"},
+        "source_id": {"$ref": "#/$defs/uuid"},
+        "event_id": {"$ref": "#/$defs/uuid"},
+        "confidence": {"$ref": "#/$defs/confidence"},
+        "note": {"type": ["string", "null"]}
+      }
+    },
+    "artefact": {
+      "type": "object",
+      "description": "1.1: a reference to a Document holding an artefact (§3.5).",
+      "required": ["document_id", "artefact_type"],
+      "properties": {
+        "document_id": {"$ref": "#/$defs/uuid"},
+        "artefact_type": {"$ref": "#/$defs/vocab_artefact_type"},
+        "format": {"type": ["string", "null"]},
+        "generator": {"type": ["string", "null"]},
+        "derived_from_id": {"$ref": "#/$defs/uuid"},
+        "consent": {"$ref": "#/$defs/vocab_consent"}
+      }
+    },
+    "morphology": {
+      "type": "object",
+      "description": "AXGF 1.1 — Morphology.",
+      "properties": {
+        "height": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"type": "number", "minimum": 20, "maximum": 300, "x-axgf-unit": "cm"}}
+          }
+        },
+        "weight": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"type": "number", "minimum": 0.3, "maximum": 700, "x-axgf-unit": "kg"}}
+          }
+        },
+        "bmi": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"type": "number", "minimum": 5, "maximum": 150, "x-axgf-unit": "kg/m²"}}
+          }
+        },
+        "body_composition": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "properties": {
+                  "bone_percent": {"type": "number", "minimum": 0, "maximum": 100, "x-axgf-unit": "%"},
+                  "muscle_percent": {"type": "number", "minimum": 0, "maximum": 100, "x-axgf-unit": "%"},
+                  "fat_percent": {"type": "number", "minimum": 0, "maximum": 100, "x-axgf-unit": "%"}
+                },
+                "anyOf": [
+                  {"required": ["bone_percent"]},
+                  {"required": ["muscle_percent"]},
+                  {"required": ["fat_percent"]}
+                ]
+              }
+            }
+          }
+        },
+        "build": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"$ref": "#/$defs/vocab_build"}}
+          }
+        },
+        "eye_colour": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"$ref": "#/$defs/vocab_eye_colour"}}
+          }
+        },
+        "eye_shape": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"$ref": "#/$defs/vocab_eye_shape"}}
+          }
+        },
+        "eye_spacing": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"$ref": "#/$defs/vocab_eye_spacing"}}
+          }
+        },
+        "hair_colour": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"$ref": "#/$defs/vocab_hair_colour"}}
+          }
+        },
+        "hair_texture": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"$ref": "#/$defs/vocab_hair_texture"}}
+          }
+        },
+        "hairline": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"$ref": "#/$defs/vocab_hairline"}}
+          }
+        },
+        "facial_hair": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"$ref": "#/$defs/vocab_facial_hair"}}
+          }
+        },
+        "body_hair": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"$ref": "#/$defs/vocab_body_hair"}}
+          }
+        },
+        "skin_tone": {
+          "allOf": [{"$ref": "#/$defs/claim"}],
+          "properties": {"value": {"$ref": "#/$defs/vocab_skin_tone"}}
+        },
+        "skin_undertone": {
+          "allOf": [{"$ref": "#/$defs/claim"}],
+          "properties": {"value": {"$ref": "#/$defs/vocab_skin_undertone"}}
+        },
+        "freckles": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"$ref": "#/$defs/vocab_freckles"}}
+          }
+        },
+        "pigmentation": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["kind"],
+                "properties": {
+                  "kind": {"$ref": "#/$defs/vocab_pigmentation_mark"},
+                  "body_region": {"$ref": "#/$defs/vocab_body_region"},
+                  "description": {"type": "string", "minLength": 1}
+                }
+              }
+            }
+          }
+        },
+        "scars": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["description"],
+                "properties": {
+                  "description": {"type": "string", "minLength": 1},
+                  "body_region": {"$ref": "#/$defs/vocab_body_region"}
+                }
+              }
+            }
+          }
+        },
+        "tattoos": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["description"],
+                "properties": {
+                  "description": {"type": "string", "minLength": 1},
+                  "body_region": {"$ref": "#/$defs/vocab_body_region"}
+                }
+              }
+            }
+          }
+        },
+        "moles": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["body_region"],
+                "properties": {
+                  "body_region": {"$ref": "#/$defs/vocab_body_region"},
+                  "location": {"type": "string", "minLength": 1},
+                  "shape": {"$ref": "#/$defs/vocab_mole_shape"},
+                  "diameter_mm": {"type": "number", "minimum": 0, "maximum": 500, "x-axgf-unit": "mm"}
+                }
+              }
+            }
+          }
+        },
+        "facial_asymmetries": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"type": "string", "minLength": 1}}
+          }
+        },
+        "face_shape": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"$ref": "#/$defs/vocab_face_shape"}}
+          }
+        },
+        "nose_shape": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"$ref": "#/$defs/vocab_nose_shape"}}
+          }
+        },
+        "ear_shape": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"$ref": "#/$defs/vocab_ear_shape"}}
+          }
+        },
+        "lip_shape": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"$ref": "#/$defs/vocab_lip_shape"}}
+          }
+        },
+        "dentition": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"$ref": "#/$defs/vocab_dentition"}}
+          }
+        },
+        "malocclusion": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"$ref": "#/$defs/vocab_malocclusion"}}
+          }
+        },
+        "posture": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"$ref": "#/$defs/vocab_posture"}}
+          }
+        },
+        "gait": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"$ref": "#/$defs/vocab_gait"}}
+          }
+        },
+        "distinguishing_features": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"type": "string", "minLength": 1}}
+          }
+        }
+      }
+    },
+    "biometrics": {
+      "type": "object",
+      "description": "AXGF 1.1 — Biometrics.",
+      "properties": {
+        "fingerprints": {
+          "x-axgf-class": "biometrics",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "allOf": [{"$ref": "#/$defs/artefact"}],
+                "properties": {"artefact_type": {"enum": ["fingerprint_card", "fingerprint_template"]}}
+              }
+            }
+          }
+        },
+        "retinal_print": {
+          "x-axgf-class": "biometrics",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "allOf": [{"$ref": "#/$defs/artefact"}],
+                "properties": {"artefact_type": {"enum": ["retinal_image"]}}
+              }
+            }
+          }
+        },
+        "voice_signature": {
+          "x-axgf-class": "biometrics",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "allOf": [{"$ref": "#/$defs/artefact"}],
+                "properties": {"artefact_type": {"enum": ["voiceprint"]}}
+              }
+            }
+          }
+        },
+        "voice_frequency": {
+          "x-axgf-class": "biometrics",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"type": "number", "minimum": 30, "maximum": 1100, "x-axgf-unit": "Hz"}}
+          }
+        },
+        "vocal_timbre": {
+          "x-axgf-class": "biometrics",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"$ref": "#/$defs/vocab_vocal_timbre"}}
+          }
+        },
+        "spoken_accent": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["language"],
+                "properties": {
+                  "language": {"$ref": "#/$defs/language_tag"},
+                  "description": {"type": "string", "minLength": 1}
+                }
+              }
+            }
+          }
+        },
+        "speech_rate": {
+          "x-axgf-class": "biometrics",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {"type": "number", "minimum": 10, "maximum": 600, "x-axgf-unit": "words/min"}
+            }
+          }
+        },
+        "verbal_tics": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"type": "string", "minLength": 1}}
+          }
+        },
+        "frequent_vocabulary": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"type": "string", "minLength": 1}}
+          }
+        },
+        "speech_register": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"$ref": "#/$defs/vocab_speech_register"}}
+          }
+        },
+        "motor_tics": {
+          "x-axgf-class": "health",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"type": "string", "minLength": 1}}
+          }
+        },
+        "handedness": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"$ref": "#/$defs/vocab_handedness"}}
+          }
+        },
+        "hearing": {
+          "x-axgf-class": "health",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["grade"],
+                "properties": {
+                  "ear": {"$ref": "#/$defs/vocab_laterality"},
+                  "grade": {"$ref": "#/$defs/vocab_hearing_grade"},
+                  "threshold_db": {"type": "number", "minimum": -10, "maximum": 130, "x-axgf-unit": "dB HL"}
+                }
+              }
+            }
+          }
+        },
+        "visual_acuity": {
+          "x-axgf-class": "health",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["eye", "decimal"],
+                "properties": {
+                  "eye": {"$ref": "#/$defs/vocab_laterality"},
+                  "decimal": {"type": "number", "minimum": 0, "maximum": 2.5},
+                  "corrected": {"type": "boolean"}
+                }
+              }
+            }
+          }
+        },
+        "optical_correction": {
+          "x-axgf-class": "health",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["kind"],
+                "properties": {
+                  "kind": {"$ref": "#/$defs/vocab_optical_correction"},
+                  "prescription": {"type": "string", "minLength": 1}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "health": {
+      "type": "object",
+      "description": "AXGF 1.1 — Health.",
+      "x-axgf-class": "health",
+      "properties": {
+        "blood_group": {
+          "x-axgf-class": "health",
+          "allOf": [{"$ref": "#/$defs/claim"}],
+          "properties": {"value": {"$ref": "#/$defs/vocab_blood_group"}}
+        },
+        "rhesus": {
+          "x-axgf-class": "health",
+          "allOf": [{"$ref": "#/$defs/claim"}],
+          "properties": {"value": {"$ref": "#/$defs/vocab_rhesus"}}
+        },
+        "blood_pressure": {
+          "x-axgf-class": "health",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["systolic", "diastolic"],
+                "properties": {
+                  "systolic": {"type": "integer", "minimum": 40, "maximum": 300, "x-axgf-unit": "mmHg"},
+                  "diastolic": {"type": "integer", "minimum": 20, "maximum": 200, "x-axgf-unit": "mmHg"}
+                }
+              }
+            }
+          }
+        },
+        "resting_heart_rate": {
+          "x-axgf-class": "health",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"type": "integer", "minimum": 20, "maximum": 250, "x-axgf-unit": "bpm"}}
+          }
+        },
+        "respiratory_capacity": {
+          "x-axgf-class": "health",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "properties": {
+                  "fev1_litres": {"type": "number", "minimum": 0, "maximum": 10, "x-axgf-unit": "L"},
+                  "fvc_litres": {"type": "number", "minimum": 0, "maximum": 12, "x-axgf-unit": "L"},
+                  "fev1_fvc_ratio": {"type": "number", "minimum": 0, "maximum": 1}
+                },
+                "anyOf": [
+                  {"required": ["fev1_litres"]},
+                  {"required": ["fvc_litres"]},
+                  {"required": ["fev1_fvc_ratio"]}
+                ]
+              }
+            }
+          }
+        },
+        "conditions": {
+          "x-axgf-class": "health",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["description"],
+                "properties": {
+                  "description": {"type": "string", "minLength": 1},
+                  "icd10_chapter": {"$ref": "#/$defs/vocab_icd10_chapter"},
+                  "chronic": {"type": "boolean"},
+                  "autoimmune": {"type": "boolean"},
+                  "diagnosis": {"$ref": "#/$defs/vocab_diagnosis_status"}
+                }
+              }
+            }
+          }
+        },
+        "surgeries": {
+          "x-axgf-class": "health",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["description"],
+                "properties": {
+                  "description": {"type": "string", "minLength": 1},
+                  "body_region": {"$ref": "#/$defs/vocab_body_region"}
+                }
+              }
+            }
+          }
+        },
+        "injuries": {
+          "x-axgf-class": "health",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["description"],
+                "properties": {
+                  "description": {"type": "string", "minLength": 1},
+                  "body_region": {"$ref": "#/$defs/vocab_body_region"},
+                  "fracture": {"type": "boolean"}
+                }
+              }
+            }
+          }
+        },
+        "deformities": {
+          "x-axgf-class": "health",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["description"],
+                "properties": {
+                  "description": {"type": "string", "minLength": 1},
+                  "body_region": {"$ref": "#/$defs/vocab_body_region"},
+                  "congenital": {"type": "boolean"}
+                }
+              }
+            }
+          }
+        },
+        "amputations": {
+          "x-axgf-class": "health",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["body_region"],
+                "properties": {
+                  "body_region": {"$ref": "#/$defs/vocab_body_region"},
+                  "level": {"type": "string", "minLength": 1},
+                  "cause": {"type": "string", "minLength": 1}
+                }
+              }
+            }
+          }
+        },
+        "prostheses": {
+          "x-axgf-class": "health",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["kind"],
+                "properties": {
+                  "kind": {"$ref": "#/$defs/vocab_prosthesis_kind"},
+                  "description": {"type": "string", "minLength": 1}
+                }
+              }
+            }
+          }
+        },
+        "implants": {
+          "x-axgf-class": "health",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["kind"],
+                "properties": {
+                  "kind": {"$ref": "#/$defs/vocab_implant_kind"},
+                  "description": {"type": "string", "minLength": 1}
+                }
+              }
+            }
+          }
+        },
+        "devices": {
+          "x-axgf-class": "health",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["kind"],
+                "properties": {
+                  "kind": {"$ref": "#/$defs/vocab_device_kind"},
+                  "description": {"type": "string", "minLength": 1}
+                }
+              }
+            }
+          }
+        },
+        "medications": {
+          "x-axgf-class": "health",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["substance"],
+                "properties": {
+                  "substance": {"type": "string", "minLength": 1},
+                  "dose": {"type": "string", "minLength": 1},
+                  "indication": {"type": "string", "minLength": 1}
+                }
+              }
+            }
+          }
+        },
+        "allergies": {
+          "x-axgf-class": "health",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["type", "allergen"],
+                "properties": {
+                  "type": {"$ref": "#/$defs/vocab_allergy_type"},
+                  "allergen": {"type": "string", "minLength": 1},
+                  "severity": {"$ref": "#/$defs/vocab_allergy_severity"},
+                  "reaction": {"type": "string", "minLength": 1}
+                }
+              }
+            }
+          }
+        },
+        "vaccinations": {
+          "x-axgf-class": "health",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["pathogen", "status"],
+                "properties": {
+                  "pathogen": {"$ref": "#/$defs/vocab_pathogen"},
+                  "status": {"$ref": "#/$defs/vocab_vaccination_status"},
+                  "dose": {"type": "integer", "minimum": 1, "maximum": 20}
+                }
+              }
+            }
+          }
+        },
+        "serology": {
+          "x-axgf-class": "health",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["pathogen", "result"],
+                "properties": {
+                  "pathogen": {"$ref": "#/$defs/vocab_pathogen"},
+                  "result": {"$ref": "#/$defs/vocab_serology_result"}
+                }
+              }
+            }
+          }
+        },
+        "lab_results": {
+          "x-axgf-class": "health",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["panel", "analyte", "result", "unit"],
+                "properties": {
+                  "panel": {"$ref": "#/$defs/vocab_lab_panel"},
+                  "analyte": {"$ref": "#/$defs/vocab_lab_analyte"},
+                  "result": {"type": "number"},
+                  "unit": {"$ref": "#/$defs/vocab_lab_unit"},
+                  "reference_low": {"type": "number"},
+                  "reference_high": {"type": "number"},
+                  "flag": {"$ref": "#/$defs/vocab_lab_flag"}
+                }
+              }
+            }
+          }
+        },
+        "deficiencies": {
+          "x-axgf-class": "health",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["nutrient"],
+                "properties": {
+                  "nutrient": {"$ref": "#/$defs/vocab_nutrient"},
+                  "description": {"type": "string", "minLength": 1}
+                }
+              }
+            }
+          }
+        },
+        "sleep_disorders": {
+          "x-axgf-class": "health",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["category"],
+                "properties": {
+                  "category": {"$ref": "#/$defs/vocab_sleep_disorder"},
+                  "description": {"type": "string", "minLength": 1}
+                }
+              }
+            }
+          }
+        },
+        "mental_health_assessments": {
+          "x-axgf-class": "health",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["instrument"],
+                "properties": {
+                  "instrument": {"$ref": "#/$defs/vocab_assessment_instrument"},
+                  "score": {"type": "number", "minimum": 0, "maximum": 1000},
+                  "severity": {"$ref": "#/$defs/vocab_assessment_severity"},
+                  "summary": {"type": "string", "minLength": 1}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "genomics": {
+      "type": "object",
+      "description": "AXGF 1.1 — Genomics.",
+      "x-axgf-class": "genomics",
+      "properties": {
+        "autosomal_mapping": {
+          "x-axgf-class": "genomics",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "properties": {
+                  "provider": {"type": "string", "minLength": 1},
+                  "test": {"type": "string", "minLength": 1},
+                  "reference_build": {"$ref": "#/$defs/vocab_reference_build"},
+                  "snp_count": {"type": "integer", "minimum": 1, "maximum": 100000000},
+                  "document_id": {"$ref": "#/$defs/uuid"}
+                }
+              }
+            }
+          }
+        },
+        "y_haplogroup": {
+          "x-axgf-class": "genomics",
+          "allOf": [{"$ref": "#/$defs/claim"}],
+          "properties": {
+            "value": {
+              "type": "object",
+              "required": ["major"],
+              "properties": {
+                "major": {"$ref": "#/$defs/vocab_y_haplogroup"},
+                "subclade": {
+                  "type": "string",
+                  "pattern": "^[A-T](0{1,2})?([0-9a-z]*|-[A-Z]{1,5}[0-9]+(\\.[0-9]+)*)$"
+                },
+                "tree_version": {"type": "string", "minLength": 1}
+              }
+            }
+          }
+        },
+        "mt_haplogroup": {
+          "x-axgf-class": "genomics",
+          "allOf": [{"$ref": "#/$defs/claim"}],
+          "properties": {
+            "value": {
+              "type": "object",
+              "required": ["major"],
+              "properties": {
+                "major": {"$ref": "#/$defs/vocab_mt_haplogroup"},
+                "subclade": {"type": "string", "pattern": "^(L[0-6]|HV|[A-Z])[0-9A-Za-z'+.*]*$"},
+                "tree_version": {"type": "string", "minLength": 1}
+              }
+            }
+          }
+        },
+        "whole_genome_sequencing": {
+          "x-axgf-class": "genomics",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "properties": {
+                  "provider": {"type": "string", "minLength": 1},
+                  "coverage": {"type": "number", "minimum": 0, "maximum": 10000, "x-axgf-unit": "x"},
+                  "reference_build": {"$ref": "#/$defs/vocab_reference_build"},
+                  "file_format": {"$ref": "#/$defs/vocab_genomic_file_format"},
+                  "document_id": {"$ref": "#/$defs/uuid"}
+                }
+              }
+            }
+          }
+        },
+        "risk_variants": {
+          "x-axgf-class": "genomics",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["variant"],
+                "properties": {
+                  "variant": {"type": "string", "minLength": 1},
+                  "gene": {"type": "string", "minLength": 1},
+                  "zygosity": {"$ref": "#/$defs/vocab_zygosity"},
+                  "significance": {"$ref": "#/$defs/vocab_clinical_significance"},
+                  "condition": {"type": "string", "minLength": 1}
+                }
+              }
+            }
+          }
+        },
+        "hereditary_conditions": {
+          "x-axgf-class": "genomics",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["description"],
+                "properties": {
+                  "description": {"type": "string", "minLength": 1},
+                  "inheritance": {"$ref": "#/$defs/vocab_inheritance_pattern"},
+                  "carrier_status": {"$ref": "#/$defs/vocab_carrier_status"}
+                }
+              }
+            }
+          }
+        },
+        "predispositions": {
+          "x-axgf-class": "genomics",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["description"],
+                "properties": {
+                  "description": {"type": "string", "minLength": 1},
+                  "polygenic_score": {"type": "number"},
+                  "percentile": {"type": "number", "minimum": 0, "maximum": 100}
+                }
+              }
+            }
+          }
+        },
+        "epigenetic_markers": {
+          "x-axgf-class": "genomics",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["description"],
+                "properties": {
+                  "description": {"type": "string", "minLength": 1},
+                  "marker": {"type": "string", "minLength": 1}
+                }
+              }
+            }
+          }
+        },
+        "epigenetic_age": {
+          "x-axgf-class": "genomics",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["clock"],
+                "properties": {
+                  "clock": {"$ref": "#/$defs/vocab_epigenetic_clock"},
+                  "age_years": {"type": "number", "minimum": 0, "maximum": 200, "x-axgf-unit": "years"},
+                  "pace": {"type": "number", "minimum": 0, "maximum": 5}
+                },
+                "anyOf": [{"required": ["age_years"]}, {"required": ["pace"]}]
+              }
+            }
+          }
+        },
+        "gut_microbiome": {
+          "x-axgf-class": "genomics",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "properties": {
+                  "provider": {"type": "string", "minLength": 1},
+                  "shannon_diversity": {"type": "number", "minimum": 0, "maximum": 20},
+                  "summary": {"type": "string", "minLength": 1},
+                  "document_id": {"$ref": "#/$defs/uuid"}
+                }
+              }
+            }
+          }
+        },
+        "skin_microbiome": {
+          "x-axgf-class": "genomics",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "properties": {
+                  "provider": {"type": "string", "minLength": 1},
+                  "shannon_diversity": {"type": "number", "minimum": 0, "maximum": 20},
+                  "summary": {"type": "string", "minLength": 1},
+                  "document_id": {"$ref": "#/$defs/uuid"}
+                }
+              }
+            }
+          }
+        },
+        "toxicological_sensitivities": {
+          "x-axgf-class": "genomics",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["substance"],
+                "properties": {
+                  "substance": {"type": "string", "minLength": 1},
+                  "gene": {"type": "string", "minLength": 1},
+                  "metaboliser_status": {"$ref": "#/$defs/vocab_metaboliser_status"},
+                  "description": {"type": "string", "minLength": 1}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "residence": {
+      "type": "object",
+      "description": "AXGF 1.1 — Residence and nationality.",
+      "properties": {
+        "addresses": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "properties": {
+                  "use": {"$ref": "#/$defs/vocab_address_use"},
+                  "lines": {"type": "string", "minLength": 1},
+                  "place_id": {"$ref": "#/$defs/uuid"},
+                  "postal_code": {"type": "string", "minLength": 1},
+                  "country": {"$ref": "#/$defs/vocab_country"},
+                  "coordinates": {"$ref": "#/$defs/coordinates"}
+                },
+                "anyOf": [{"required": ["lines"]}, {"required": ["place_id"]}]
+              }
+            }
+          }
+        },
+        "nationality_of_origin": {
+          "allOf": [{"$ref": "#/$defs/claim"}],
+          "properties": {"value": {"$ref": "#/$defs/vocab_country"}}
+        },
+        "acquired_nationalities": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["country"],
+                "properties": {
+                  "country": {"$ref": "#/$defs/vocab_country"},
+                  "mode": {"$ref": "#/$defs/vocab_nationality_mode"}
+                }
+              }
+            }
+          }
+        },
+        "mother_tongue": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"$ref": "#/$defs/language_tag"}}
+          }
+        },
+        "spoken_languages": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["language"],
+                "properties": {
+                  "language": {"$ref": "#/$defs/language_tag"},
+                  "proficiency": {"$ref": "#/$defs/vocab_language_proficiency"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "education": {
+      "type": "object",
+      "description": "AXGF 1.1 — Education and work.",
+      "properties": {
+        "level": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"$ref": "#/$defs/vocab_isced_level"}}
+          }
+        },
+        "diplomas": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["title"],
+                "properties": {
+                  "title": {"type": "string", "minLength": 1},
+                  "isced_level": {"$ref": "#/$defs/vocab_isced_level"},
+                  "institution": {"type": "string", "minLength": 1},
+                  "place_id": {"$ref": "#/$defs/uuid"}
+                }
+              }
+            }
+          }
+        },
+        "institutions": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                  "name": {"type": "string", "minLength": 1},
+                  "isced_level": {"$ref": "#/$defs/vocab_isced_level"},
+                  "place_id": {"$ref": "#/$defs/uuid"}
+                }
+              }
+            }
+          }
+        },
+        "income": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "properties": {
+                  "quintile": {"$ref": "#/$defs/vocab_income_quintile"},
+                  "amount": {"type": "number", "minimum": 0},
+                  "currency": {"$ref": "#/$defs/currency_code"},
+                  "period": {"$ref": "#/$defs/vocab_pay_period"}
+                },
+                "anyOf": [{"required": ["quintile"]}, {"required": ["amount"]}]
+              }
+            }
+          }
+        },
+        "real_estate": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["description"],
+                "properties": {
+                  "description": {"type": "string", "minLength": 1},
+                  "tenure": {"$ref": "#/$defs/vocab_tenure"},
+                  "place_id": {"$ref": "#/$defs/uuid"},
+                  "document_id": {"$ref": "#/$defs/uuid"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "military": {
+      "type": "object",
+      "description": "AXGF 1.1 — Military and honours.",
+      "properties": {
+        "distinctions": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                  "name": {"type": "string", "minLength": 1},
+                  "kind": {"$ref": "#/$defs/vocab_distinction_kind"},
+                  "conferred_by": {"type": "string", "minLength": 1},
+                  "country": {"$ref": "#/$defs/vocab_country"}
+                }
+              }
+            }
+          }
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["text"],
+                "properties": {
+                  "text": {"type": "string", "minLength": 1},
+                  "unit": {"type": "string", "minLength": 1}
+                }
+              }
+            }
+          }
+        },
+        "ranks": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "properties": {
+                  "country": {"$ref": "#/$defs/vocab_country"},
+                  "service": {"$ref": "#/$defs/vocab_military_service"},
+                  "rank": {"type": "string", "minLength": 1},
+                  "rank_text": {"type": "string", "minLength": 1},
+                  "category": {"$ref": "#/$defs/vocab_rank_category"}
+                },
+                "anyOf": [{"required": ["rank"]}, {"required": ["rank_text"]}],
+                "allOf": [
+                  {
+                    "if": {
+                      "required": ["country", "rank"],
+                      "properties": {"country": {"const": "FR"}}
+                    },
+                    "then": {"properties": {"rank": {"$ref": "#/$defs/vocab_military_rank_fr"}}}
+                  },
+                  {
+                    "if": {
+                      "required": ["country", "rank"],
+                      "properties": {"country": {"const": "PL"}}
+                    },
+                    "then": {"properties": {"rank": {"$ref": "#/$defs/vocab_military_rank_pl"}}}
+                  },
+                  {
+                    "if": {
+                      "required": ["country", "rank"],
+                      "properties": {"country": {"const": "DE"}}
+                    },
+                    "then": {"properties": {"rank": {"$ref": "#/$defs/vocab_military_rank_de"}}}
+                  },
+                  {
+                    "if": {
+                      "required": ["country", "rank"],
+                      "properties": {"country": {"const": "GB"}}
+                    },
+                    "then": {"properties": {"rank": {"$ref": "#/$defs/vocab_military_rank_gb"}}}
+                  },
+                  {
+                    "if": {
+                      "required": ["country", "rank"],
+                      "properties": {"country": {"const": "US"}}
+                    },
+                    "then": {"properties": {"rank": {"$ref": "#/$defs/vocab_military_rank_us"}}}
+                  },
+                  {
+                    "if": {
+                      "required": ["country", "rank"],
+                      "properties": {"country": {"const": "RU"}}
+                    },
+                    "then": {"properties": {"rank": {"$ref": "#/$defs/vocab_military_rank_ru"}}}
+                  },
+                  {
+                    "if": {"required": ["rank"]},
+                    "then": {
+                      "required": ["country"],
+                      "properties": {"country": {"enum": ["FR", "PL", "DE", "GB", "US", "RU"]}}
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "units": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"type": "string", "minLength": 1}}
+          }
+        },
+        "service_numbers": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["number"],
+                "properties": {
+                  "number": {"type": "string", "minLength": 1},
+                  "service": {"$ref": "#/$defs/vocab_military_service"},
+                  "country": {"$ref": "#/$defs/vocab_country"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "legal": {
+      "type": "object",
+      "description": "AXGF 1.1 — Legal.",
+      "x-axgf-class": "legal",
+      "properties": {
+        "criminal_record": {
+          "x-axgf-class": "legal",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["offence"],
+                "properties": {
+                  "offence": {"type": "string", "minLength": 1},
+                  "iccs_section": {"$ref": "#/$defs/vocab_iccs_section"},
+                  "jurisdiction": {"$ref": "#/$defs/vocab_country"},
+                  "court": {"type": "string", "minLength": 1},
+                  "outcome": {"$ref": "#/$defs/vocab_case_outcome"},
+                  "sentence": {"type": "string", "minLength": 1}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "belief": {
+      "type": "object",
+      "description": "AXGF 1.1 — Belief and affiliation.",
+      "x-axgf-class": "health",
+      "properties": {
+        "religions": {
+          "x-axgf-class": "health",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["tradition"],
+                "properties": {
+                  "tradition": {"$ref": "#/$defs/vocab_religion"},
+                  "denomination": {"type": "string", "minLength": 1}
+                }
+              }
+            }
+          }
+        },
+        "sacraments": {
+          "x-axgf-class": "health",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["sacrament"],
+                "properties": {
+                  "sacrament": {"$ref": "#/$defs/vocab_sacrament"},
+                  "place_id": {"$ref": "#/$defs/uuid"}
+                }
+              }
+            }
+          }
+        },
+        "beliefs": {
+          "x-axgf-class": "health",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"type": "string", "minLength": 1}}
+          }
+        },
+        "political_leanings": {
+          "x-axgf-class": "health",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "properties": {
+                  "position": {"$ref": "#/$defs/vocab_political_position"},
+                  "party": {"type": "string", "minLength": 1}
+                },
+                "anyOf": [{"required": ["position"]}, {"required": ["party"]}]
+              }
+            }
+          }
+        },
+        "memberships": {
+          "x-axgf-class": "health",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["organisation"],
+                "properties": {
+                  "organisation": {"type": "string", "minLength": 1},
+                  "kind": {"$ref": "#/$defs/vocab_membership_kind"},
+                  "role": {"type": "string", "minLength": 1}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "personality": {
+      "type": "object",
+      "description": "AXGF 1.1 — Personality and behaviour.",
+      "properties": {
+        "big_five": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": [
+                  "openness", "conscientiousness", "extraversion", "agreeableness",
+                  "neuroticism"
+                ],
+                "properties": {
+                  "openness": {"type": "integer", "minimum": 0, "maximum": 100},
+                  "conscientiousness": {"type": "integer", "minimum": 0, "maximum": 100},
+                  "extraversion": {"type": "integer", "minimum": 0, "maximum": 100},
+                  "agreeableness": {"type": "integer", "minimum": 0, "maximum": 100},
+                  "neuroticism": {"type": "integer", "minimum": 0, "maximum": 100},
+                  "instrument": {"$ref": "#/$defs/vocab_personality_instrument"}
+                }
+              }
+            }
+          }
+        },
+        "mbti": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"$ref": "#/$defs/vocab_mbti"}}
+          }
+        },
+        "introversion_extraversion": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"$ref": "#/$defs/vocab_introversion_extraversion"}}
+          }
+        },
+        "stress_tolerance": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"$ref": "#/$defs/vocab_stress_tolerance"}}
+          }
+        },
+        "decision_style": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"$ref": "#/$defs/vocab_decision_style"}}
+          }
+        },
+        "interests": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"type": "string", "minLength": 1}}
+          }
+        },
+        "hobbies": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {"value": {"type": "string", "minLength": 1}}
+          }
+        },
+        "sports": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["sport"],
+                "properties": {
+                  "sport": {"type": "string", "minLength": 1},
+                  "level": {"$ref": "#/$defs/vocab_sport_level"}
+                }
+              }
+            }
+          }
+        },
+        "dietary_habits": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["diet"],
+                "properties": {
+                  "diet": {"$ref": "#/$defs/vocab_diet"},
+                  "details": {"type": "string", "minLength": 1}
+                }
+              }
+            }
+          }
+        },
+        "dependencies": {
+          "x-axgf-class": "health",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["substance"],
+                "properties": {
+                  "substance": {"$ref": "#/$defs/vocab_substance"},
+                  "pattern": {"$ref": "#/$defs/vocab_use_pattern"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "digital_legacy": {
+      "type": "object",
+      "description": "AXGF 1.1 — Digital legacy.",
+      "properties": {
+        "body_models": {
+          "x-axgf-class": "biometrics",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "allOf": [{"$ref": "#/$defs/artefact"}],
+                "properties": {"artefact_type": {"enum": ["mesh", "point_cloud"]}}
+              }
+            }
+          }
+        },
+        "skin_textures": {
+          "x-axgf-class": "biometrics",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "allOf": [{"$ref": "#/$defs/artefact"}],
+                "properties": {"artefact_type": {"enum": ["skin_texture_map"]}}
+              }
+            }
+          }
+        },
+        "rigs": {
+          "x-axgf-class": "biometrics",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "allOf": [{"$ref": "#/$defs/artefact"}],
+                "properties": {"artefact_type": {"enum": ["skeletal_rig"]}}
+              }
+            }
+          }
+        },
+        "voice_corpora": {
+          "x-axgf-class": "biometrics",
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "allOf": [{"$ref": "#/$defs/artefact"}],
+                "properties": {"artefact_type": {"enum": ["voice_corpus"]}}
+              }
+            }
+          }
+        },
+        "text_corpora": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "allOf": [{"$ref": "#/$defs/artefact"}],
+                "properties": {"artefact_type": {"enum": ["text_corpus"]}}
+              }
+            }
+          }
+        },
+        "digital_traces": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "allOf": [{"$ref": "#/$defs/artefact"}],
+                "properties": {"artefact_type": {"enum": ["trace_archive"]}}
+              }
+            }
+          }
+        },
+        "carbon_footprint": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["tonnes_co2e_per_year"],
+                "properties": {
+                  "tonnes_co2e_per_year": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100000,
+                    "x-axgf-unit": "t CO2e/yr"
+                  },
+                  "method": {"type": "string", "minLength": 1}
+                }
+              }
+            }
+          }
+        },
+        "behaviour_models": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "allOf": [{"$ref": "#/$defs/artefact"}],
+                "properties": {"artefact_type": {"enum": ["behaviour_model"]}}
+              }
+            }
+          }
+        }
+      }
+    },
+    "civil_status": {
+      "type": "object",
+      "description": "AXGF 1.1 — civil status.",
+      "properties": {
+        "birth_certificate_number": {
+          "allOf": [{"$ref": "#/$defs/claim"}],
+          "properties": {"value": {"type": "string", "minLength": 1}}
+        },
+        "register_entries": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["register_type"],
+                "properties": {
+                  "register_type": {"$ref": "#/$defs/vocab_register_type"},
+                  "office": {"type": "string", "minLength": 1},
+                  "place_id": {"$ref": "#/$defs/uuid"},
+                  "volume": {"type": "string", "minLength": 1},
+                  "page": {"type": "string", "minLength": 1},
+                  "entry_number": {"type": "string", "minLength": 1}
+                }
+              }
+            }
+          }
+        },
+        "marginal_annotations": {
+          "type": "array",
+          "items": {
+            "allOf": [{"$ref": "#/$defs/claim"}],
+            "properties": {
+              "value": {
+                "type": "object",
+                "required": ["text"],
+                "properties": {
+                  "text": {"type": "string", "minLength": 1},
+                  "register_type": {"$ref": "#/$defs/vocab_register_type"},
+                  "entry_number": {"type": "string", "minLength": 1}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "vocab_sensitive_class": {
+      "type": "string",
+      "title": "Sensitive class",
+      "enum": ["health", "biometrics", "genomics", "legal"]
+    },
+    "vocab_laterality": {"type": "string", "title": "Laterality", "enum": ["left", "right", "both"]},
+    "vocab_body_region": {
+      "type": "string",
+      "title": "Body region",
+      "enum": [
+        "head", "face", "neck", "left_shoulder", "right_shoulder", "left_arm", "right_arm",
+        "left_hand", "right_hand", "chest", "abdomen", "upper_back", "lower_back", "pelvis",
+        "left_leg", "right_leg", "left_foot", "right_foot", "internal", "whole_body", "other"
+      ]
+    },
+    "vocab_artefact_type": {
+      "type": "string",
+      "title": "Artefact type",
+      "enum": [
+        "mesh", "point_cloud", "skin_texture_map", "skeletal_rig", "voice_corpus",
+        "text_corpus", "trace_archive", "behaviour_model", "fingerprint_card",
+        "fingerprint_template", "retinal_image", "voiceprint"
+      ]
+    },
+    "vocab_consent": {
+      "type": "string",
+      "title": "Consent",
+      "enum": ["given", "given_by_estate", "refused", "withdrawn", "not_asked", "unknown"]
+    },
+    "vocab_sex_at_birth": {
+      "type": "string",
+      "title": "Sex at birth",
+      "enum": ["female", "male", "intersex", "undetermined", "unknown"]
+    },
+    "vocab_gender_identity": {
+      "type": "string",
+      "title": "Gender identity",
+      "enum": ["woman", "man", "non_binary", "other", "undisclosed", "unknown"]
+    },
+    "vocab_title_kind": {
+      "type": "string",
+      "title": "Title kind",
+      "enum": [
+        "nobility", "academic", "professional", "religious", "military", "civic", "courtesy",
+        "other"
+      ]
+    },
+    "vocab_register_type": {
+      "type": "string",
+      "title": "Register entry type",
+      "enum": [
+        "birth", "baptism", "marriage", "death", "burial", "divorce", "recognition",
+        "legitimation", "adoption", "name_change", "other"
+      ]
+    },
+    "vocab_build": {
+      "type": "string",
+      "title": "Build",
+      "enum": ["slight", "slim", "average", "sturdy", "stout", "heavy"]
+    },
+    "vocab_eye_colour": {
+      "type": "string",
+      "title": "Eye colour",
+      "enum": [
+        "light_blue", "blue", "dark_blue", "grey", "blue_grey", "green", "grey_green", "hazel",
+        "amber", "light_brown", "brown", "dark_brown", "black", "mixed", "other"
+      ]
+    },
+    "vocab_eye_shape": {
+      "type": "string",
+      "title": "Eye shape",
+      "enum": [
+        "almond", "round", "hooded", "monolid", "deep_set", "protruding", "upturned",
+        "downturned", "other"
+      ]
+    },
+    "vocab_eye_spacing": {"type": "string", "title": "Eye spacing", "enum": ["close_set", "average", "wide_set"]},
+    "vocab_hair_colour": {
+      "type": "string",
+      "title": "Natural hair colour",
+      "enum": [
+        "black", "dark_brown", "brown", "light_brown", "auburn", "red", "strawberry_blond",
+        "dark_blond", "blond", "light_blond", "grey", "white", "none", "other"
+      ]
+    },
+    "vocab_hair_texture": {
+      "type": "string",
+      "title": "Hair texture",
+      "enum": ["straight", "wavy", "curly", "coily", "other"]
+    },
+    "vocab_hairline": {
+      "type": "string",
+      "title": "Hairline",
+      "enum": [
+        "straight", "rounded", "widows_peak", "m_shaped", "bell_shaped", "uneven", "receding",
+        "bald"
+      ]
+    },
+    "vocab_facial_hair": {
+      "type": "string",
+      "title": "Facial hair",
+      "enum": ["none", "stubble", "moustache", "goatee", "full_beard", "sideburns", "other"]
+    },
+    "vocab_body_hair": {"type": "string", "title": "Body hair", "enum": ["none", "sparse", "moderate", "dense"]},
+    "vocab_skin_tone": {
+      "type": "string",
+      "title": "Skin tone (Fitzpatrick phototype)",
+      "enum": ["type_i", "type_ii", "type_iii", "type_iv", "type_v", "type_vi"]
+    },
+    "vocab_skin_undertone": {"type": "string", "title": "Skin undertone", "enum": ["cool", "neutral", "warm", "olive"]},
+    "vocab_freckles": {"type": "string", "title": "Freckles", "enum": ["none", "few", "moderate", "many"]},
+    "vocab_pigmentation_mark": {
+      "type": "string",
+      "title": "Pigmentation mark",
+      "enum": [
+        "birthmark", "port_wine_stain", "cafe_au_lait_spot", "depigmented_patch",
+        "hyperpigmented_patch", "other"
+      ]
+    },
+    "vocab_mole_shape": {"type": "string", "title": "Mole shape", "enum": ["round", "oval", "irregular", "other"]},
+    "vocab_face_shape": {
+      "type": "string",
+      "title": "Face shape",
+      "enum": ["oval", "round", "square", "oblong", "heart", "diamond", "triangular"]
+    },
+    "vocab_nose_shape": {
+      "type": "string",
+      "title": "Nose shape",
+      "enum": [
+        "straight", "aquiline", "snub", "upturned", "flat", "broad", "bulbous", "crooked",
+        "other"
+      ]
+    },
+    "vocab_ear_shape": {
+      "type": "string",
+      "title": "Ear shape",
+      "enum": ["free_lobe", "attached_lobe", "protruding", "close_set", "pointed", "other"]
+    },
+    "vocab_lip_shape": {
+      "type": "string",
+      "title": "Lip shape",
+      "enum": ["thin", "medium", "full", "bow_shaped", "wide", "downturned", "other"]
+    },
+    "vocab_dentition": {
+      "type": "string",
+      "title": "Dentition",
+      "enum": [
+        "primary", "mixed", "permanent_complete", "permanent_partial_loss", "edentulous",
+        "partial_denture", "full_denture", "implants"
+      ]
+    },
+    "vocab_malocclusion": {
+      "type": "string",
+      "title": "Malocclusion (Angle class)",
+      "enum": ["normal", "class_i", "class_ii_division_1", "class_ii_division_2", "class_iii"]
+    },
+    "vocab_posture": {
+      "type": "string",
+      "title": "Posture",
+      "enum": ["ideal", "kyphotic_lordotic", "flat_back", "sway_back", "stooped", "scoliotic", "other"]
+    },
+    "vocab_gait": {
+      "type": "string",
+      "title": "Gait",
+      "enum": [
+        "brisk", "average", "slow", "shuffling", "limping", "waddling", "unsteady", "stiff",
+        "other"
+      ]
+    },
+    "vocab_vocal_timbre": {
+      "type": "string",
+      "title": "Vocal timbre",
+      "enum": ["bright", "dark", "warm", "breathy", "nasal", "hoarse", "resonant", "thin", "other"]
+    },
+    "vocab_speech_register": {
+      "type": "string",
+      "title": "Register of speech",
+      "enum": ["frozen", "formal", "consultative", "casual", "intimate"]
+    },
+    "vocab_handedness": {
+      "type": "string",
+      "title": "Handedness",
+      "enum": ["left", "right", "ambidextrous", "mixed", "unknown"]
+    },
+    "vocab_hearing_grade": {
+      "type": "string",
+      "title": "Hearing grade",
+      "enum": ["normal", "mild", "moderate", "moderately_severe", "severe", "profound", "complete"]
+    },
+    "vocab_optical_correction": {
+      "type": "string",
+      "title": "Optical correction",
+      "enum": [
+        "none", "glasses", "contact_lenses", "glasses_and_contact_lenses",
+        "refractive_surgery", "intraocular_lens", "other"
+      ]
+    },
+    "vocab_blood_group": {"type": "string", "title": "Blood group (ABO)", "enum": ["A", "B", "AB", "O"]},
+    "vocab_rhesus": {
+      "type": "string",
+      "title": "Rhesus (RhD)",
+      "enum": ["positive", "negative", "weak_d", "unknown"]
+    },
+    "vocab_icd10_chapter": {
+      "type": "string",
+      "title": "ICD-10 chapter",
+      "enum": [
+        "infectious_parasitic", "neoplasms", "blood_immune", "endocrine_metabolic",
+        "mental_behavioural", "nervous_system", "eye_adnexa", "ear_mastoid", "circulatory",
+        "respiratory", "digestive", "skin", "musculoskeletal", "genitourinary",
+        "pregnancy_childbirth", "perinatal", "congenital", "ill_defined", "injury_poisoning",
+        "external_causes", "health_factors", "special_purposes"
+      ]
+    },
+    "vocab_diagnosis_status": {
+      "type": "string",
+      "title": "Diagnosis status",
+      "enum": ["diagnosed", "suspected", "self_reported", "unknown"]
+    },
+    "vocab_prosthesis_kind": {
+      "type": "string",
+      "title": "Prosthesis",
+      "enum": ["limb", "joint", "ocular", "dental", "auditory", "breast", "other"]
+    },
+    "vocab_implant_kind": {
+      "type": "string",
+      "title": "Biomedical implant",
+      "enum": [
+        "orthopaedic", "dental", "cochlear", "breast", "intraocular_lens", "contraceptive",
+        "cosmetic", "other"
+      ]
+    },
+    "vocab_device_kind": {
+      "type": "string",
+      "title": "Intracorporeal device",
+      "enum": [
+        "pacemaker", "implantable_defibrillator", "cardiac_resynchronisation",
+        "ventricular_assist", "neurostimulator", "insulin_pump", "drug_port", "shunt", "stent",
+        "other"
+      ]
+    },
+    "vocab_allergy_type": {
+      "type": "string",
+      "title": "Allergy type",
+      "enum": ["drug", "food", "environmental", "insect_venom", "latex", "other"]
+    },
+    "vocab_allergy_severity": {
+      "type": "string",
+      "title": "Allergy severity",
+      "enum": ["mild", "moderate", "severe", "anaphylactic", "unknown"]
+    },
+    "vocab_pathogen": {
+      "type": "string",
+      "title": "Pathogen or vaccine target",
+      "enum": [
+        "diphtheria", "tetanus", "pertussis", "poliomyelitis", "measles", "mumps", "rubella",
+        "varicella", "smallpox", "tuberculosis", "hepatitis_a", "hepatitis_b", "hepatitis_c",
+        "haemophilus_influenzae_b", "pneumococcal", "meningococcal", "human_papillomavirus",
+        "influenza", "covid_19", "rotavirus", "yellow_fever", "typhoid", "cholera", "rabies",
+        "japanese_encephalitis", "tick_borne_encephalitis", "hiv", "syphilis", "toxoplasmosis",
+        "cytomegalovirus", "epstein_barr", "other"
+      ]
+    },
+    "vocab_vaccination_status": {
+      "type": "string",
+      "title": "Vaccination status",
+      "enum": ["vaccinated", "partially_vaccinated", "unvaccinated", "contraindicated", "unknown"]
+    },
+    "vocab_serology_result": {
+      "type": "string",
+      "title": "Serology result",
+      "enum": ["positive", "negative", "equivocal", "unknown"]
+    },
+    "vocab_lab_panel": {
+      "type": "string",
+      "title": "Laboratory panel",
+      "enum": ["basic_metabolic", "lipid", "liver", "renal", "glycated_haemoglobin", "iron"]
+    },
+    "vocab_lab_analyte": {
+      "type": "string",
+      "title": "Laboratory analyte",
+      "enum": [
+        "sodium", "potassium", "chloride", "bicarbonate", "urea", "creatinine", "glucose",
+        "calcium", "total_cholesterol", "ldl_cholesterol", "hdl_cholesterol", "triglycerides",
+        "non_hdl_cholesterol", "alt", "ast", "alp", "ggt", "total_bilirubin",
+        "direct_bilirubin", "albumin", "total_protein", "egfr", "uric_acid", "phosphate",
+        "urine_albumin_creatinine_ratio", "hba1c", "serum_iron", "ferritin", "transferrin",
+        "transferrin_saturation", "tibc"
+      ]
+    },
+    "vocab_lab_unit": {
+      "type": "string",
+      "title": "Laboratory unit (UCUM)",
+      "enum": [
+        "mmol/L", "umol/L", "mg/dL", "g/L", "g/dL", "U/L", "%", "mmol/mol", "ug/L", "ug/dL",
+        "ng/mL", "mL/min/{1.73_m2}", "mg/mmol", "mg/g"
+      ]
+    },
+    "vocab_lab_flag": {
+      "type": "string",
+      "title": "Laboratory flag",
+      "enum": ["low", "normal", "high", "critical_low", "critical_high"]
+    },
+    "vocab_nutrient": {
+      "type": "string",
+      "title": "Nutrient",
+      "enum": [
+        "vitamin_a", "thiamine", "riboflavin", "niacin", "vitamin_b6", "folate", "vitamin_b12",
+        "vitamin_c", "vitamin_d", "vitamin_e", "vitamin_k", "iron", "zinc", "magnesium",
+        "calcium", "iodine", "selenium", "copper", "potassium", "phosphorus", "other"
+      ]
+    },
+    "vocab_sleep_disorder": {
+      "type": "string",
+      "title": "Sleep disorder category",
+      "enum": [
+        "insomnia", "sleep_related_breathing", "central_hypersomnolence", "circadian_rhythm",
+        "parasomnia", "sleep_related_movement", "other"
+      ]
+    },
+    "vocab_assessment_instrument": {
+      "type": "string",
+      "title": "Assessment instrument",
+      "enum": [
+        "phq_9", "gad_7", "bdi_ii", "hads", "k10", "gds_15", "mmse", "moca", "audit",
+        "clinical_interview", "other"
+      ]
+    },
+    "vocab_assessment_severity": {
+      "type": "string",
+      "title": "Assessment severity",
+      "enum": ["none_minimal", "mild", "moderate", "moderately_severe", "severe"]
+    },
+    "vocab_reference_build": {
+      "type": "string",
+      "title": "Reference genome build",
+      "enum": ["grch36", "grch37", "grch38", "t2t_chm13"]
+    },
+    "vocab_genomic_file_format": {
+      "type": "string",
+      "title": "Genomic file format",
+      "enum": ["raw_microarray", "fastq", "bam", "cram", "vcf", "gvcf", "other"]
+    },
+    "vocab_y_haplogroup": {
+      "type": "string",
+      "title": "Y-DNA major haplogroup",
+      "enum": [
+        "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q",
+        "R", "S", "T"
+      ]
+    },
+    "vocab_mt_haplogroup": {
+      "type": "string",
+      "title": "mtDNA major haplogroup",
+      "enum": [
+        "L0", "L1", "L2", "L3", "L4", "L5", "L6", "M", "N", "R", "A", "B", "C", "D", "E", "F",
+        "G", "H", "HV", "I", "J", "K", "O", "P", "Q", "S", "T", "U", "V", "W", "X", "Y", "Z"
+      ]
+    },
+    "vocab_zygosity": {
+      "type": "string",
+      "title": "Zygosity",
+      "enum": ["heterozygous", "homozygous", "hemizygous", "compound_heterozygous"]
+    },
+    "vocab_clinical_significance": {
+      "type": "string",
+      "title": "Clinical significance",
+      "enum": ["pathogenic", "likely_pathogenic", "uncertain_significance", "likely_benign", "benign"]
+    },
+    "vocab_inheritance_pattern": {
+      "type": "string",
+      "title": "Inheritance pattern",
+      "enum": [
+        "autosomal_dominant", "autosomal_recessive", "x_linked_dominant", "x_linked_recessive",
+        "y_linked", "mitochondrial", "multifactorial", "unknown"
+      ]
+    },
+    "vocab_carrier_status": {
+      "type": "string",
+      "title": "Carrier status",
+      "enum": ["affected", "carrier", "not_carrier", "unknown"]
+    },
+    "vocab_epigenetic_clock": {
+      "type": "string",
+      "title": "Epigenetic clock",
+      "enum": ["horvath", "hannum", "phenoage", "grimage", "dunedinpace", "other"]
+    },
+    "vocab_metaboliser_status": {
+      "type": "string",
+      "title": "Metaboliser status",
+      "enum": ["poor", "intermediate", "normal", "rapid", "ultrarapid"]
+    },
+    "vocab_autopsy": {
+      "type": "string",
+      "title": "Autopsy",
+      "enum": ["not_performed", "clinical", "forensic", "external_examination", "unknown"]
+    },
+    "vocab_disposition": {
+      "type": "string",
+      "title": "Disposition of the body",
+      "enum": [
+        "burial", "cremation", "entombment", "burial_at_sea", "natural_burial",
+        "body_donation", "other", "unknown"
+      ]
+    },
+    "vocab_address_use": {
+      "type": "string",
+      "title": "Address use",
+      "enum": ["principal", "secondary", "temporary", "postal", "other"]
+    },
+    "vocab_country": {
+      "type": "string",
+      "title": "Country",
+      "enum": [
+        "AD", "AE", "AF", "AG", "AI", "AL", "AM", "AO", "AQ", "AR", "AS", "AT", "AU", "AW",
+        "AX", "AZ", "BA", "BB", "BD", "BE", "BF", "BG", "BH", "BI", "BJ", "BL", "BM", "BN",
+        "BO", "BQ", "BR", "BS", "BT", "BV", "BW", "BY", "BZ", "CA", "CC", "CD", "CF", "CG",
+        "CH", "CI", "CK", "CL", "CM", "CN", "CO", "CR", "CU", "CV", "CW", "CX", "CY", "CZ",
+        "DE", "DJ", "DK", "DM", "DO", "DZ", "EC", "EE", "EG", "EH", "ER", "ES", "ET", "FI",
+        "FJ", "FK", "FM", "FO", "FR", "GA", "GB", "GD", "GE", "GF", "GG", "GH", "GI", "GL",
+        "GM", "GN", "GP", "GQ", "GR", "GS", "GT", "GU", "GW", "GY", "HK", "HM", "HN", "HR",
+        "HT", "HU", "ID", "IE", "IL", "IM", "IN", "IO", "IQ", "IR", "IS", "IT", "JE", "JM",
+        "JO", "JP", "KE", "KG", "KH", "KI", "KM", "KN", "KP", "KR", "KW", "KY", "KZ", "LA",
+        "LB", "LC", "LI", "LK", "LR", "LS", "LT", "LU", "LV", "LY", "MA", "MC", "MD", "ME",
+        "MF", "MG", "MH", "MK", "ML", "MM", "MN", "MO", "MP", "MQ", "MR", "MS", "MT", "MU",
+        "MV", "MW", "MX", "MY", "MZ", "NA", "NC", "NE", "NF", "NG", "NI", "NL", "NO", "NP",
+        "NR", "NU", "NZ", "OM", "PA", "PE", "PF", "PG", "PH", "PK", "PL", "PM", "PN", "PR",
+        "PS", "PT", "PW", "PY", "QA", "RE", "RO", "RS", "RU", "RW", "SA", "SB", "SC", "SD",
+        "SE", "SG", "SH", "SI", "SJ", "SK", "SL", "SM", "SN", "SO", "SR", "SS", "ST", "SV",
+        "SX", "SY", "SZ", "TC", "TD", "TF", "TG", "TH", "TJ", "TK", "TL", "TM", "TN", "TO",
+        "TR", "TT", "TV", "TW", "TZ", "UA", "UG", "UM", "US", "UY", "UZ", "VA", "VC", "VE",
+        "VG", "VI", "VN", "VU", "WF", "WS", "YE", "YT", "ZA", "ZM", "ZW", "SU", "DD", "YU",
+        "CS", "OT"
+      ]
+    },
+    "vocab_nationality_mode": {
+      "type": "string",
+      "title": "How a nationality was acquired",
+      "enum": [
+        "descent", "birth_in_territory", "naturalisation", "marriage", "registration",
+        "restoration", "state_succession", "other"
+      ]
+    },
+    "vocab_language_proficiency": {
+      "type": "string",
+      "title": "Language proficiency",
+      "enum": ["a1", "a2", "b1", "b2", "c1", "c2", "native"]
+    },
+    "vocab_isced_level": {
+      "type": "string",
+      "title": "Education level (ISCED 2011)",
+      "enum": [
+        "isced_0", "isced_1", "isced_2", "isced_3", "isced_4", "isced_5", "isced_6", "isced_7",
+        "isced_8"
+      ]
+    },
+    "vocab_income_quintile": {"type": "string", "title": "Income quintile", "enum": ["q1", "q2", "q3", "q4", "q5"]},
+    "vocab_pay_period": {
+      "type": "string",
+      "title": "Pay period",
+      "enum": ["hourly", "daily", "weekly", "monthly", "annual"]
+    },
+    "vocab_tenure": {
+      "type": "string",
+      "title": "Tenure",
+      "enum": ["owned", "co_owned", "leasehold", "rented", "usufruct", "other"]
+    },
+    "vocab_distinction_kind": {
+      "type": "string",
+      "title": "Distinction",
+      "enum": ["order", "decoration", "medal", "title", "other"]
+    },
+    "vocab_military_service": {
+      "type": "string",
+      "title": "Service",
+      "enum": [
+        "army", "navy", "air_force", "marines", "gendarmerie", "border_guard",
+        "national_guard", "other"
+      ]
+    },
+    "vocab_rank_category": {
+      "type": "string",
+      "title": "Rank category",
+      "enum": [
+        "enlisted", "non_commissioned", "warrant", "officer_cadet", "junior_officer",
+        "senior_officer", "general_officer"
+      ]
+    },
+    "vocab_military_rank_fr": {
+      "type": "string",
+      "title": "Military rank — Armée de terre (France)",
+      "enum": [
+        "soldat_de_2e_classe", "soldat_de_1re_classe", "caporal", "caporal_chef",
+        "caporal_chef_de_1re_classe", "sergent", "sergent_chef", "adjudant", "adjudant_chef",
+        "major", "aspirant", "sous_lieutenant", "lieutenant", "capitaine", "commandant",
+        "lieutenant_colonel", "colonel", "general_de_brigade", "general_de_division",
+        "general_de_corps_d_armee", "general_d_armee", "marechal_de_france"
+      ]
+    },
+    "vocab_military_rank_pl": {
+      "type": "string",
+      "title": "Military rank — Wojska Lądowe (Polska)",
+      "enum": [
+        "szeregowy", "starszy_szeregowy", "kapral", "starszy_kapral", "plutonowy", "sierzant",
+        "starszy_sierzant", "mlodszy_chorazy", "chorazy", "starszy_chorazy",
+        "starszy_chorazy_sztabowy", "podporucznik", "porucznik", "kapitan", "major",
+        "podpulkownik", "pulkownik", "general_brygady", "general_dywizji", "general_broni",
+        "general", "marszalek_polski"
+      ]
+    },
+    "vocab_military_rank_de": {
+      "type": "string",
+      "title": "Military rank — Heer (Deutschland)",
+      "enum": [
+        "soldat", "gefreiter", "obergefreiter", "hauptgefreiter", "stabsgefreiter",
+        "oberstabsgefreiter", "unteroffizier", "stabsunteroffizier", "feldwebel",
+        "oberfeldwebel", "hauptfeldwebel", "stabsfeldwebel", "oberstabsfeldwebel",
+        "fahnenjunker", "faehnrich", "oberfaehnrich", "leutnant", "oberleutnant", "hauptmann",
+        "stabshauptmann", "major", "oberstleutnant", "oberst", "brigadegeneral",
+        "generalmajor", "generalleutnant", "general"
+      ]
+    },
+    "vocab_military_rank_gb": {
+      "type": "string",
+      "title": "Military rank — British Army (United Kingdom)",
+      "enum": [
+        "private", "lance_corporal", "corporal", "sergeant", "staff_sergeant",
+        "warrant_officer_class_2", "warrant_officer_class_1", "officer_cadet",
+        "second_lieutenant", "lieutenant", "captain", "major", "lieutenant_colonel", "colonel",
+        "brigadier", "major_general", "lieutenant_general", "general", "field_marshal"
+      ]
+    },
+    "vocab_military_rank_us": {
+      "type": "string",
+      "title": "Military rank — United States Army",
+      "enum": [
+        "private", "private_first_class", "specialist", "corporal", "sergeant",
+        "staff_sergeant", "sergeant_first_class", "master_sergeant", "first_sergeant",
+        "sergeant_major", "command_sergeant_major", "sergeant_major_of_the_army",
+        "warrant_officer_1", "chief_warrant_officer_2", "chief_warrant_officer_3",
+        "chief_warrant_officer_4", "chief_warrant_officer_5", "second_lieutenant",
+        "first_lieutenant", "captain", "major", "lieutenant_colonel", "colonel",
+        "brigadier_general", "major_general", "lieutenant_general", "general",
+        "general_of_the_army"
+      ]
+    },
+    "vocab_military_rank_ru": {
+      "type": "string",
+      "title": "Military rank — Сухопутные войска (Россия)",
+      "enum": [
+        "ryadovoy", "efreytor", "mladshiy_serzhant", "serzhant", "starshiy_serzhant",
+        "starshina", "praporshchik", "starshiy_praporshchik", "mladshiy_leytenant",
+        "leytenant", "starshiy_leytenant", "kapitan", "mayor", "podpolkovnik", "polkovnik",
+        "general_mayor", "general_leytenant", "general_polkovnik", "general_armii",
+        "marshal_rossiyskoy_federatsii"
+      ]
+    },
+    "vocab_iccs_section": {
+      "type": "string",
+      "title": "Offence section (ICCS)",
+      "enum": [
+        "acts_leading_to_death", "acts_causing_harm", "sexual_acts", "property_with_violence",
+        "property_only", "controlled_substances", "fraud_deception_corruption",
+        "public_order_and_state", "public_safety_and_security", "natural_environment",
+        "other_criminal_acts"
+      ]
+    },
+    "vocab_case_outcome": {
+      "type": "string",
+      "title": "Case outcome",
+      "enum": [
+        "convicted", "acquitted", "dismissed", "conviction_quashed", "pardoned", "amnestied",
+        "expunged", "pending", "unknown"
+      ]
+    },
+    "vocab_religion": {
+      "type": "string",
+      "title": "Religious tradition",
+      "enum": [
+        "buddhism", "christianity_catholic", "christianity_orthodox",
+        "christianity_protestant", "christianity_other", "hinduism", "islam_sunni",
+        "islam_shia", "islam_other", "jainism", "judaism", "sikhism", "bahai", "shinto",
+        "taoism", "zoroastrianism", "traditional", "other", "none", "unknown"
+      ]
+    },
+    "vocab_sacrament": {
+      "type": "string",
+      "title": "Sacrament or rite",
+      "enum": [
+        "baptism", "confirmation", "first_communion", "reconciliation",
+        "anointing_of_the_sick", "holy_orders", "matrimony", "other_rite"
+      ]
+    },
+    "vocab_political_position": {
+      "type": "string",
+      "title": "Political position",
+      "enum": [
+        "far_left", "left", "centre_left", "centre", "centre_right", "right", "far_right",
+        "apolitical", "other", "unknown"
+      ]
+    },
+    "vocab_membership_kind": {
+      "type": "string",
+      "title": "Membership",
+      "enum": [
+        "trade_union", "political_party", "professional_body", "religious_order",
+        "religious_association", "fraternal_order", "veterans_association", "sports_club",
+        "cultural_association", "charitable_association", "other"
+      ]
+    },
+    "vocab_mbti": {
+      "type": "string",
+      "title": "MBTI type",
+      "enum": [
+        "ISTJ", "ISFJ", "INFJ", "INTJ", "ISTP", "ISFP", "INFP", "INTP", "ESTP", "ESFP", "ENFP",
+        "ENTP", "ESTJ", "ESFJ", "ENFJ", "ENTJ"
+      ]
+    },
+    "vocab_personality_instrument": {
+      "type": "string",
+      "title": "Personality instrument",
+      "enum": [
+        "neo_pi_3", "neo_ffi_3", "bfi_2", "ipip_neo_120", "tipi", "hexaco_pi_r",
+        "observer_rating", "inferred", "other"
+      ]
+    },
+    "vocab_introversion_extraversion": {
+      "type": "string",
+      "title": "Introversion and extraversion",
+      "enum": [
+        "strongly_introverted", "introverted", "ambiverted", "extraverted",
+        "strongly_extraverted"
+      ]
+    },
+    "vocab_stress_tolerance": {
+      "type": "string",
+      "title": "Stress tolerance",
+      "enum": ["very_low", "low", "moderate", "high", "very_high"]
+    },
+    "vocab_decision_style": {
+      "type": "string",
+      "title": "Decision-making style",
+      "enum": ["rational", "intuitive", "dependent", "avoidant", "spontaneous"]
+    },
+    "vocab_sport_level": {
+      "type": "string",
+      "title": "Sport level",
+      "enum": ["recreational", "amateur_competitive", "semi_professional", "professional"]
+    },
+    "vocab_diet": {
+      "type": "string",
+      "title": "Dietary pattern",
+      "enum": ["omnivore", "flexitarian", "pescatarian", "vegetarian", "vegan", "other"]
+    },
+    "vocab_substance": {
+      "type": "string",
+      "title": "Substance or behaviour",
+      "enum": [
+        "tobacco", "alcohol", "cannabis", "opioids", "stimulants", "sedatives_hypnotics",
+        "hallucinogens", "inhalants", "gambling", "gaming", "other"
+      ]
+    },
+    "vocab_use_pattern": {
+      "type": "string",
+      "title": "Pattern of use",
+      "enum": ["occasional_use", "regular_use", "harmful_use", "dependence", "in_remission"]
+    },
+    "vocab_lineage": {
+      "type": "string",
+      "title": "Lineage",
+      "enum": ["biological", "adoptive", "foster", "step", "guardianship", "unknown"]
+    },
+    "vocab_link_relation": {
+      "type": "string",
+      "title": "Relation",
+      "enum": [
+        "godparent", "godchild", "witness", "officiant", "business_partner", "employer",
+        "employee", "mentor", "apprentice", "close_friend", "neighbour", "guardian", "ward",
+        "other"
+      ]
+    }
+  },
+  "oneOf": [
+    {"$ref": "#/$defs/manifest"},
+    {"$ref": "#/$defs/person"},
+    {"$ref": "#/$defs/family"},
+    {"$ref": "#/$defs/event"},
+    {"$ref": "#/$defs/link"},
+    {"$ref": "#/$defs/occupation"},
+    {"$ref": "#/$defs/source"},
+    {"$ref": "#/$defs/place"},
+    {"$ref": "#/$defs/document"}
+  ]
+}

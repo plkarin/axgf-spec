@@ -4,7 +4,7 @@
 
 **The open genealogy data standard for the modern era**
 
-[![Version](https://img.shields.io/badge/version-1.0-667eea?style=flat-square)](https://github.com/plkarin/axgf-spec)
+[![Version](https://img.shields.io/badge/version-1.0_%C2%B7_1.1_draft-667eea?style=flat-square)](https://github.com/plkarin/axgf-spec)
 [![License](https://img.shields.io/badge/license-CC0_1.0-43d9a2?style=flat-square)](https://creativecommons.org/publicdomain/zero/1.0/)
 [![Status](https://img.shields.io/badge/status-draft_for_review-ffd93d?style=flat-square)](https://github.com/plkarin/axgf-spec/issues)
 [![Format](https://img.shields.io/badge/format-JSON_%2B_ZIP-764ba2?style=flat-square)](https://github.com/plkarin/axgf-spec/blob/main/schema/axgf-1.0.schema.json)
@@ -12,7 +12,7 @@
 *GEDCOM was designed in 1984 for floppy disk exchange.*  
 *AXGF is designed for 2026 — JSON-native, AI-readable, multilingual, document-embedding.*
 
-[Specification →](./SPEC_1.0.md) · [JSON Schema →](./schema/axgf-1.0.schema.json) · [Examples →](./examples/) · [Discuss →](https://github.com/plkarin/axgf-spec/issues)
+[Specification 1.0 →](./SPEC_1.0.md) · [1.1 draft: person profile →](./SPEC_1.1.md) · [JSON Schema 1.0](./schema/axgf-1.0.schema.json) · [1.1](./schema/axgf-1.1.schema.json) · [Examples →](./examples/) · [Discuss →](https://github.com/plkarin/axgf-spec/issues)
 
 </div>
 
@@ -40,6 +40,13 @@ GEDCOM 5.5.1 (1999) and even GEDCOM 7 (2021) were designed around a person-centr
 | LLM-readable narrative pages | ❌ | ✅ optional Markdown vault |
 | JSON Schema validation | ❌ | ✅ draft 2020-12 |
 | Git-diffable | ❌ | ✅ one file per entity |
+| Physical description, health, genome, beliefs, service | ⚠️ free text (`DSCR`, `RELI`, `EDUC`, `NATI`) | ✅ 1.1: 132 attributes in 14 groups, every one a dated, sourced claim |
+| Values that change over a life | ❌ one value per tag | ✅ 1.1: series — two heights, two nationalities, both kept |
+| Comparable descriptions | ❌ free text | ✅ 1.1: 102 closed vocabularies — ISCED, ICD-10 chapters, Fitzpatrick, ISOGG, CEFR… |
+| Sensitive data governed by class | ❌ | ✅ 1.1: health · biometrics · genomics · legal, withheld and exported per class |
+| Adoptive, foster and step lineage | ⚠️ `PEDI` | ✅ 1.1: `lineage` on each child of a family |
+| Typed non-family relations | ⚠️ `ASSO`/`RELA` free text | ✅ 1.1: Link `relation` vocabulary |
+| 3D models, voice corpora, trained models | ❌ | ✅ 1.1: artefacts held as Documents, with consent |
 
 ---
 
@@ -169,7 +176,7 @@ Plus: **OCCUPATION** (career state), **SOURCE** (evidence), **PLACE** (reusable 
 ```
 family.axgf  (ZIP)
 ├── manifest.json
-├── schema/axgf-1.0.schema.json
+├── schema/axgf-1.0.schema.json   (axgf-1.1.schema.json in a 1.1 bundle)
 ├── persons/{uuid}.json
 ├── families/{uuid}.json
 ├── events/{uuid}.json
@@ -217,6 +224,20 @@ in the first place: `gedcom2axgf.py` (GEDCOM 5.5.1 files) and
 
 `birth` · `death` · `marriage` · `divorce` · `adoption` · `migration` · `naturalization` · `military` · `incarceration` · `name_change` · `census` · `legal` · `religious` · `social` · `historical` · `other`
 
+## Person Profile Groups (1.1 draft)
+
+Identity and civil status · Morphology · Biometrics · Health · Genomics · Death · Residence and nationality · Education and work · Military and honours · Legal · Belief and affiliation · Personality and behaviour · Relationships · Digital legacy — see [SPEC_1.1.md](./SPEC_1.1.md) §5.
+
+```json
+"health": {
+  "blood_group": { "value": "O", "source_id": "c3d4e5f6-a7b8-4c9d-8e0f-1a2b3c4d5e6f", "confidence": 0.95 },
+  "blood_pressure": [
+    { "value": { "systolic": 145, "diastolic": 88 },
+      "date": { "value": "2010-02-03", "precision": "exact" }, "confidence": 0.9 }
+  ]
+}
+```
+
 ---
 
 ## Roadmap
@@ -224,7 +245,7 @@ in the first place: `gedcom2axgf.py` (GEDCOM 5.5.1 files) and
 | Version | Target | Description |
 |---|---|---|
 | **1.0** | June 2026 | Initial public draft — core entities, i18n, confidence, documents |
-| 1.1 | Q3 2026 | Community feedback integration, DNA sources refinement |
+| 1.1 | Q3 2026 | **Draft:** extended person profile — claims, series, closed vocabularies, sensitive classes, lineage, typed relations, digital legacy |
 | 1.2 | Q4 2026 | Place authority file, Wikidata integration spec |
 | 2.0 | 2027 | Binary format option, streaming support for large trees |
 

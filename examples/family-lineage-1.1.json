@@ -1,0 +1,36 @@
+{
+  "id": "aaaa1234-e29b-41d4-a716-446655440001",
+  "type": "family",
+  "axgf_version": "1.1",
+  "union": {
+    "type": "marriage",
+    "persons": [
+      {
+        "person_id": "11111111-1111-4111-8111-111111111111",
+        "role": "spouse"
+      },
+      {
+        "person_id": "22222222-2222-4222-8222-222222222222",
+        "role": "spouse"
+      }
+    ],
+    "start": {
+      "date": {
+        "value": "1950-06-03",
+        "precision": "exact"
+      }
+    }
+  },
+  "children": [
+    {
+      "person_id": "33333333-3333-4333-8333-333333333333",
+      "birth_order": 1,
+      "lineage": "step"
+    },
+    {
+      "person_id": "44444444-4444-4444-8444-444444444444",
+      "birth_order": 2,
+      "lineage": "biological"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "id": "bbbb1234-e29b-41d4-a716-446655440002",
+  "type": "link",
+  "axgf_version": "1.1",
+  "from": {
+    "entity_type": "person",
+    "entity_id": "55555555-5555-4555-8555-555555555555"
+  },
+  "to": {
+    "entity_type": "person",
+    "entity_id": "44444444-4444-4444-8444-444444444444"
+  },
+  "label": "matka chrzestna",
+  "label_reverse": "chrześniak",
+  "category": "spiritual",
+  "relation": "godparent",
+  "confidence": 0.9
+}
