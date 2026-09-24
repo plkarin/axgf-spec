@@ -13,9 +13,9 @@ cross-references to AXGF UUIDs. `gedcom2axgf.py` is the reusable engine:
 `webtrees2axgf.py` imports it, so its parser, date handling and bundle writer
 are shared rather than duplicated.
 
-> `gedcom_dedup.py` (the safe-deduplication helper) is referenced elsewhere in
-> the project but is not part of this checkout; deduplication is also available
-> through `axgf dedup`.
+> Deduplicating a converted bundle — the same person or couple entered twice —
+> is `axgf dedup` in the reference library ([`axgf-rs`](https://crates.io/crates/axgf-rs)),
+> not a script here.
 
 ---
 

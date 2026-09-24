@@ -276,19 +276,20 @@ Changes to the format are made here first and only then implemented downstream. 
 
 | Project | Language | Status |
 |---|---|---|
-| [axgf-lib](https://github.com/plkarin/axgf-lib) | Rust | Reference library — published on crates.io as [`axgf-rs`](https://crates.io/crates/axgf-rs) |
-| [axgf-cms](https://github.com/plkarin/axgf-cms) | Rust | Reference web application |
+| [axgf-lib](https://github.com/plkarin/axgf-lib) | Rust | Reference library, AXGF 1.0 and 1.1 — published on crates.io as [`axgf-rs`](https://crates.io/crates/axgf-rs), with the `axgf` command-line tool |
+| [axgf-cms](https://github.com/plkarin/axgf-cms) | Rust | Reference web application — a self-hosted site that browses and edits one `.axgf` bundle |
 | *Your project here* | — | Open a PR to list yours |
 
 ---
 
 ## Compatibility with GEDCOM
 
-AXGF is not a replacement for GEDCOM in legacy systems. It is a superset designed for modern use cases. Reference implementations provide:
+AXGF is not a replacement for GEDCOM in legacy systems. It is a superset designed for modern use cases. What exists today:
 
-- **GEDCOM 5.5.1 → AXGF** import
-- **GEDCOM 7.0 → AXGF** import  
-- **AXGF → GEDCOM 7.0** export (lossy — confidence, hypotheses, and vault are not expressible in GEDCOM)
+- **GEDCOM 5.5.1 → AXGF** — `axgf convert-gedcom` in the reference library, and [`tools/gedcom2axgf.py`](./tools/)
+- **webtrees → AXGF**, media included — [`tools/webtrees2axgf.py`](./tools/), reading the webtrees database directly
+
+Not yet implemented: GEDCOM 7.0 import, and any export from AXGF back to GEDCOM. An export would be lossy by nature — confidence, hypotheses and the vault have no GEDCOM equivalent.
 
 ---
 
@@ -305,7 +306,7 @@ SPDX-License-Identifier: CC0-1.0
 <div align="center">
 
 **AXGF — Axiom Genealogy Format**  
-*Specification v1.0 · June 2026*  
+*Specification 1.0 · June 2026 · 1.1 draft · September 2026*  
 *https://github.com/plkarin/axgf-spec*
 
 </div>
