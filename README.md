@@ -12,7 +12,7 @@
 *GEDCOM was designed in 1984 for floppy disk exchange.*  
 *AXGF is designed for 2026 — JSON-native, AI-readable, multilingual, document-embedding.*
 
-[Specification 1.0 →](./SPEC_1.0.md) · [1.1 draft: person profile →](./SPEC_1.1.md) · [JSON Schema 1.0](./schema/axgf-1.0.schema.json) · [1.1](./schema/axgf-1.1.schema.json) · [Examples →](./examples/) · [Discuss →](https://github.com/plkarin/axgf-spec/issues)
+[Specification 1.0 →](./SPEC_1.0.md) · [1.1 draft: person profile →](./SPEC_1.1.md) · [JSON Schema 1.0](./schema/axgf-1.0.schema.json) · [1.1](./schema/axgf-1.1.schema.json) · [Data catalogue →](./DATA.md) · [Examples →](./examples/) · [Discuss →](https://github.com/plkarin/axgf-spec/issues)
 
 </div>
 
@@ -226,7 +226,7 @@ in the first place: `gedcom2axgf.py` (GEDCOM 5.5.1 files) and
 
 ## Person Profile Groups (1.1 draft)
 
-Identity and civil status · Morphology · Biometrics · Health · Genomics · Death · Residence and nationality · Education and work · Military and honours · Legal · Belief and affiliation · Personality and behaviour · Relationships · Digital legacy — see [SPEC_1.1.md](./SPEC_1.1.md) §5.
+Identity and civil status · Morphology · Biometrics · Health · Genomics · Death · Residence and nationality · Education and work · Military and honours · Legal · Belief and affiliation · Personality and behaviour · Relationships · Digital legacy — see [SPEC_1.1.md](./SPEC_1.1.md) §5, or [DATA.md](./DATA.md) for every attribute the format carries, on one page.
 
 ```json
 "health": {

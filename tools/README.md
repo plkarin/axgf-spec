@@ -1,7 +1,8 @@
-# AXGF conversion tools
+# AXGF tools
 
 Command-line converters that turn genealogy data into an **AXGF 1.0** bundle
-(a `.axgf` ZIP archive validated by `axgf validate`).
+(a `.axgf` ZIP archive validated by `axgf validate`), and a check that keeps
+the data catalogue in step with the schema.
 
 | Tool | Input | Recovers media bytes? | Needs |
 | --- | --- | --- | --- |
@@ -198,3 +199,20 @@ completely on tree scope alone.)
 * **PostgreSQL** — exercised end-to-end.
 * **MySQL / MariaDB** — exercised end-to-end against MariaDB 11; produces a
   byte-for-byte equivalent bundle that passes `axgf validate` (0/0).
+
+---
+
+## `check_data_catalogue.py`
+
+```
+python3 tools/check_data_catalogue.py          # check DATA.md, exit 1 on any disagreement
+python3 tools/check_data_catalogue.py --list   # print the schema's attribute list
+```
+
+[`DATA.md`](../DATA.md) lists every attribute the format can carry. This
+script derives that list from `schema/axgf-1.0.schema.json` and
+`schema/axgf-1.1.schema.json` and checks it against the page both ways — every
+schema attribute is in `DATA.md`, every `DATA.md` attribute is in the schema —
+along with each row's kind, version, sensitive class and 1.1 vocabularies, the
+vocabulary links into the schema and every link into the specification. Run it
+after any schema change. Standard library only.
