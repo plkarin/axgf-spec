@@ -2,8 +2,8 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://axgf.org/schema/1.1/axgf.schema.json",
   "title": "AXGF 1.1 Schema",
-  "description": "JSON Schema for the Axiom Genealogy Format v1.1 (draft). A superset of 1.0: every entity valid against axgf-1.0.schema.json is valid here. Attribute schemas carry two annotations validators ignore: x-axgf-class, the sensitive class (SPEC_1.1 §4), and x-axgf-unit.",
-  "version": "1.1.0-draft",
+  "description": "JSON Schema for the Axiom Genealogy Format v1.1.0 (frozen). A superset of 1.0: every entity valid against axgf-1.0.schema.json is valid here. Attribute schemas carry two annotations validators ignore: x-axgf-class, the sensitive class (SPEC_1.1 §4), and x-axgf-unit.",
+  "version": "1.1.0",
   "$defs": {
     "uuid": {
       "type": "string",

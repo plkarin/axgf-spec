@@ -4,15 +4,15 @@
 
 **The open genealogy data standard for the modern era**
 
-[![Version](https://img.shields.io/badge/version-1.0_%C2%B7_1.1_draft-667eea?style=flat-square)](https://github.com/plkarin/axgf-spec)
+[![Version](https://img.shields.io/badge/version-1.0_%C2%B7_1.1.0-667eea?style=flat-square)](https://github.com/plkarin/axgf-spec)
 [![License](https://img.shields.io/badge/license-CC0_1.0-43d9a2?style=flat-square)](https://creativecommons.org/publicdomain/zero/1.0/)
-[![Status](https://img.shields.io/badge/status-draft_for_review-ffd93d?style=flat-square)](https://github.com/plkarin/axgf-spec/issues)
+[![Status](https://img.shields.io/badge/1.1-frozen-43d9a2?style=flat-square)](https://github.com/plkarin/axgf-spec/issues)
 [![Format](https://img.shields.io/badge/format-JSON_%2B_ZIP-764ba2?style=flat-square)](https://github.com/plkarin/axgf-spec/blob/main/schema/axgf-1.0.schema.json)
 
 *GEDCOM was designed in 1984 for floppy disk exchange.*  
 *AXGF is designed for 2026 — JSON-native, AI-readable, multilingual, document-embedding.*
 
-[Specification 1.0 →](./SPEC_1.0.md) · [1.1 draft: person profile →](./SPEC_1.1.md) · [JSON Schema 1.0](./schema/axgf-1.0.schema.json) · [1.1](./schema/axgf-1.1.schema.json) · [Data catalogue →](./DATA.md) · [Examples →](./examples/) · [Discuss →](https://github.com/plkarin/axgf-spec/issues)
+[Specification 1.0 →](./SPEC_1.0.md) · [1.1: person profile →](./SPEC_1.1.md) · [JSON Schema 1.0](./schema/axgf-1.0.schema.json) · [1.1](./schema/axgf-1.1.schema.json) · [Data catalogue →](./DATA.md) · [Examples →](./examples/) · [Discuss →](https://github.com/plkarin/axgf-spec/issues)
 
 </div>
 
@@ -224,7 +224,7 @@ in the first place: `gedcom2axgf.py` (GEDCOM 5.5.1 files) and
 
 `birth` · `death` · `marriage` · `divorce` · `adoption` · `migration` · `naturalization` · `military` · `incarceration` · `name_change` · `census` · `legal` · `religious` · `social` · `historical` · `other`
 
-## Person Profile Groups (1.1 draft)
+## Person Profile Groups (1.1)
 
 Identity and civil status · Morphology · Biometrics · Health · Genomics · Death · Residence and nationality · Education and work · Military and honours · Legal · Belief and affiliation · Personality and behaviour · Relationships · Digital legacy — see [SPEC_1.1.md](./SPEC_1.1.md) §5, or [DATA.md](./DATA.md) for every attribute the format carries, on one page.
 
@@ -245,7 +245,7 @@ Identity and civil status · Morphology · Biometrics · Health · Genomics · D
 | Version | Target | Description |
 |---|---|---|
 | **1.0** | June 2026 | Initial public draft — core entities, i18n, confidence, documents |
-| 1.1 | Q3 2026 | **Draft:** extended person profile — claims, series, closed vocabularies, sensitive classes, lineage, typed relations, digital legacy |
+| **1.1.0** | October 2026 | **Frozen:** extended person profile — claims, series, closed vocabularies, sensitive classes, lineage, typed relations, digital legacy. Bundles written against it stay valid; changes go to 1.2 |
 | 1.2 | Q4 2026 | Place authority file, Wikidata integration spec |
 | 2.0 | 2027 | Binary format option, streaming support for large trees |
 
@@ -306,7 +306,7 @@ SPDX-License-Identifier: CC0-1.0
 <div align="center">
 
 **AXGF — Axiom Genealogy Format**  
-*Specification 1.0 · June 2026 · 1.1 draft · September 2026*  
+*Specification 1.0 · June 2026 · 1.1.0 (frozen) · October 2026*  
 *https://github.com/plkarin/axgf-spec*
 
 </div>

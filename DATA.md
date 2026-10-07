@@ -2,7 +2,7 @@
 
 **Everything AXGF can hold about a person, on one page.**
 
-This page is for someone who wants to know whether AXGF can carry what their project needs, without reading the specification to find out. It lists every attribute in [AXGF 1.0](./SPEC_1.0.md) and the [1.1 draft](./SPEC_1.1.md), grouped as the specification groups them, with a short account of what each group is for and what having that data lets a project do.
+This page is for someone who wants to know whether AXGF can carry what their project needs, without reading the specification to find out. It lists every attribute in [AXGF 1.0](./SPEC_1.0.md) and the [1.1](./SPEC_1.1.md), grouped as the specification groups them, with a short account of what each group is for and what having that data lets a project do.
 
 It is a catalogue, not a second specification. It names attributes and links to where they are defined; it does not define them. The normative text is [SPEC_1.0.md](./SPEC_1.0.md), [SPEC_1.1.md](./SPEC_1.1.md) and the schemas in [`schema/`](./schema/). **If this page and the specification ever disagree, the specification is right and this page is out of date.**
 
@@ -58,7 +58,7 @@ A class follows the data, not the group: *Motor tics* sit in Biometrics and are 
 | **Vocabulary** | The closed vocabularies the value draws on, each linked to where the schema enumerates it; *free text* where part of the value is the source's own words. |
 | **Kind** | *single* — one value, fixed at birth or by one event; *series* — dated claims over a lifetime; *list* — several values at once, such as a person's documents. |
 | **Class** | Sensitive class, or — for none. |
-| **Since** | The version that introduced the attribute: 1.0, or the 1.1 draft. |
+| **Since** | The version that introduced the attribute: 1.0, or 1.1. |
 | **Spec** | The section that defines it. |
 
 ---

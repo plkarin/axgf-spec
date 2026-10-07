@@ -1,6 +1,6 @@
 # AXGF — Axiom Genealogy Format
 ## Specification Version 1.1 — Extended Person Profile
-**Status**: Draft for Public Review  
+**Status**: Frozen — 1.1.0, October 2026. Bundles written against 1.1.0 stay valid; any change to the format is 1.2.  
 **Date**: September 2026  
 **Authors**: Karin Pierre-Léonard (ax-genealogy project)  
 **License**: Creative Commons CC0 1.0 Universal (public domain)  
@@ -2923,7 +2923,7 @@ A deceased person with claims in most groups. Every value in it is a term from t
 
 | Version | Date | Changes |
 |---|---|---|
-| 1.1 (draft) | 2026-09 | Extended person profile: fourteen attribute groups, the claim, series, 102 closed vocabularies, four sensitive classes, `identity.class_visibility`, `manifest.privacy.withheld_classes`, Family `children[].lineage`, Link `relation`, Occupation `position`. Additive to 1.0. |
+| 1.1.0 | 2026-10-07 | **Frozen.** Nothing in 1.1 will change: a bundle written against 1.1.0 stays valid, and anything new is 1.2. Content as of the September draft: extended person profile: fourteen attribute groups, the claim, series, 102 closed vocabularies, four sensitive classes, `identity.class_visibility`, `manifest.privacy.withheld_classes`, Family `children[].lineage`, Link `relation`, Occupation `position`. Additive to 1.0. |
 | 1.0 | 2026-06-15 | Initial public draft |
 
 ---
@@ -2965,6 +2965,6 @@ The major haplogroups are known and stable; their subclades are revised every ye
 
 ---
 
-*AXGF Specification 1.1 (Draft) — September 2026*  
+*AXGF Specification 1.1.0 (Frozen) — October 2026*  
 *Released under Creative Commons CC0 1.0 Universal*  
 *https://github.com/plkarin/axgf-spec*
