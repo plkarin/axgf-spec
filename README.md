@@ -12,6 +12,8 @@
 *GEDCOM was designed in 1984 for floppy disk exchange.*  
 *AXGF is designed for 2026 — JSON-native, AI-readable, multilingual, document-embedding.*
 
+**Current version: 1.1.0** (frozen, October 2026) — [1.0](./SPEC_1.0.md), the core, plus [1.1](./SPEC_1.1.md), the person profile it adds. Every 1.0 bundle is a valid 1.1.0 bundle.
+
 [Specification 1.0 →](./SPEC_1.0.md) · [1.1: person profile →](./SPEC_1.1.md) · [JSON Schema 1.0](./schema/axgf-1.0.schema.json) · [1.1](./schema/axgf-1.1.schema.json) · [Data catalogue →](./DATA.md) · [Examples →](./examples/) · [Discuss →](https://github.com/plkarin/axgf-spec/issues)
 
 </div>
@@ -226,7 +228,7 @@ in the first place: `gedcom2axgf.py` (GEDCOM 5.5.1 files) and
 
 ## Person Profile Groups (1.1)
 
-Identity and civil status · Morphology · Biometrics · Health · Genomics · Death · Residence and nationality · Education and work · Military and honours · Legal · Belief and affiliation · Personality and behaviour · Relationships · Digital legacy — see [SPEC_1.1.md](./SPEC_1.1.md) §5, or [DATA.md](./DATA.md) for every attribute the format carries, on one page.
+Identity and civil status · Morphology · Biometrics · Health · Genomics · Death · Residence and nationality · Education and work · Military and honours · Legal · Belief and affiliation · Personality and behaviour · Relationships · Digital legacy — see [SPEC_1.1.md](./SPEC_1.1.md) §5, or [DATA.md](./DATA.md) for every attribute the format carries, on one page. `python3 tools/check_data_catalogue.py` holds that page and the schema to each other, both ways.
 
 ```json
 "health": {
@@ -244,7 +246,7 @@ Identity and civil status · Morphology · Biometrics · Health · Genomics · D
 
 | Version | Target | Description |
 |---|---|---|
-| **1.0** | June 2026 | Initial public draft — core entities, i18n, confidence, documents |
+| **1.0** | June 2026 | Stable core — entities, i18n, confidence, documents. Extended, unchanged, by 1.1 |
 | **1.1.0** | October 2026 | **Frozen:** extended person profile — claims, series, closed vocabularies, sensitive classes, lineage, typed relations, digital legacy. Bundles written against it stay valid; changes go to 1.2 |
 | 1.2 | Q4 2026 | Place authority file, Wikidata integration spec |
 | 2.0 | 2027 | Binary format option, streaming support for large trees |

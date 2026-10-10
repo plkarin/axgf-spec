@@ -1,10 +1,10 @@
 # AXGF — Axiom Genealogy Format
 ## Specification Version 1.0
-**Status**: Draft for Public Review  
+**Status**: Stable — the core of the format, extended by [AXGF 1.1](./SPEC_1.1.md). **The current version is 1.1.0** (frozen, October 2026); a 1.1.0 bundle is read with this document and 1.1 together, and every 1.0 bundle is a valid 1.1.0 bundle.  
 **Date**: June 2026  
 **Authors**: Karin Pierre-Léonard (ax-genealogy project)  
 **License**: Creative Commons CC0 1.0 Universal (public domain)  
-**Repository**: https://gitlab.com/plkarin/axgf-spec  
+**Repository**: https://github.com/plkarin/axgf-spec  
 **MIME Type**: `application/vnd.axgf+zip`  
 **File Extension**: `.axgf`
 
@@ -1320,4 +1320,4 @@ Genealogical data is inherently uncertain. A format that does not model uncertai
 
 *AXGF Specification 1.0 — June 2026*  
 *Released under Creative Commons CC0 1.0 Universal*  
-*https://gitlab.com/plkarin/axgf-spec*
+*https://github.com/plkarin/axgf-spec*
