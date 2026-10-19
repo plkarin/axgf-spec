@@ -204,6 +204,10 @@ cargo install axgf-rs
 axgf validate my-family.axgf
 ```
 
+No Rust toolchain? Every [release of the library](https://github.com/plkarin/axgf-lib/releases)
+carries a ready-built `axgf` for Linux (x86-64 and ARM64), macOS (Intel and
+Apple Silicon) and Windows, each with its SHA-256 sum.
+
 To check a single entity file against the schema alone, any JSON Schema
 draft 2020-12 validator will do — see [`examples/`](./examples/) for a
 ready-to-run snippet.
