@@ -152,8 +152,8 @@ The manifest is the entry point of every AXGF bundle. It MUST be present.
     "url": "https://ax-genealogy.example.com"
   },
   "family": {
-    "name": "Famille Pierre-Léonard",
-    "description": "Lignée Pierre-Léonard — La Réunion → France métropolitaine",
+    "name": "Famille Lefèvre-Morin",
+    "description": "Lignée Lefèvre-Morin — La Réunion → France métropolitaine",
     "primary_culture": "fr",
     "primary_place": "La Réunion, France",
     "time_span": {
@@ -230,8 +230,8 @@ A Person is the atomic genealogical entity. It exists independently of any famil
 
   "identity": {
     "name": {
-      "display": "Jean Pierre-Léonard",
-      "display_latin": "Jean Pierre-Léonard",
+      "display": "Jean Lefèvre-Morin",
+      "display_latin": "Jean Lefevre-Morin",
       "culture": "fr",
       "direction": "ltr",
       "display_order": "given_first",
@@ -244,8 +244,8 @@ A Person is the atomic genealogical entity. It exists independently of any famil
         },
         {
           "type": "family_name",
-          "value": "Pierre-Léonard",
-          "value_latin": "Pierre-Leonard",
+          "value": "Lefèvre-Morin",
+          "value_latin": "Lefevre-Morin",
           "order": 2
         }
       ]
@@ -253,14 +253,14 @@ A Person is the atomic genealogical entity. It exists independently of any famil
     "names": [
       {
         "type": "birth",
-        "display": "Jean-Baptiste Pierre-Léonard",
+        "display": "Jean-Baptiste Lefèvre-Morin",
         "components": [
           { "type": "given_name",  "value": "Jean-Baptiste", "order": 1 },
-          { "type": "family_name", "value": "Pierre-Léonard","order": 2 }
+          { "type": "family_name", "value": "Lefèvre-Morin","order": 2 }
         ],
         "source_id": "src-001",
         "confidence": 0.95,
-        "valid_from": "1923-04-12",
+        "valid_from": "1924-04-17",
         "valid_until": "1950-01-01",
         "note": "Nom porté à la naissance, simplifié plus tard"
       }
@@ -275,7 +275,7 @@ A Person is the atomic genealogical entity. It exists independently of any famil
 
   "birth": {
     "date": {
-      "value": "1923-04-12",
+      "value": "1924-04-17",
       "calendar": "gregorian",
       "precision": "exact",
       "circa": false,
@@ -326,7 +326,7 @@ A Person is the atomic genealogical entity. It exists independently of any famil
     "hypotheses": [
       {
         "id": "hyp-001",
-        "claim": "Possible frère de Pierre Pierre-Léonard (1920-?)",
+        "claim": "Possible frère de Pierre Lefèvre-Morin (1920-?)",
         "confidence": 0.87,
         "status": "pending",
         "evidence": "Même patronyme, même commune de naissance, période compatible",
@@ -381,7 +381,7 @@ A valid person with no known information:
     "visibility": "members"
   },
   "bio": null,
-  "notes": "Père biologique de Jean Pierre-Léonard — identité inconnue",
+  "notes": "Père biologique de Jean Lefèvre-Morin — identité inconnue",
   "ai": {
     "hypotheses": [
       {
@@ -413,15 +413,15 @@ Two shapes are common:
   "axgf_version": "1.0",
   "created_at": "2026-05-01T10:00:00Z",
 
-  "name": "Famille Pierre-Léonard — Branche Jean",
-  "description": "Union de Jean Pierre-Léonard et Élise Bernard, Paris 1948",
+  "name": "Famille Lefèvre-Morin — Branche Jean",
+  "description": "Union de Jean Lefèvre-Morin et Odile Ferrand, Paris 1948",
 
   "union": {
     "type": "marriage",
     "status": "ended_by_death",
     "persons": [
       { "person_id": "uuid-jean",  "role": "spouse" },
-      { "person_id": "uuid-elise", "role": "spouse" }
+      { "person_id": "uuid-odile", "role": "spouse" }
     ],
     "start": {
       "date": { "value": "1948-06-15", "calendar": "gregorian", "precision": "exact" },
@@ -542,7 +542,7 @@ An Event is an independent dated fact that may involve any number of persons, fa
   "participants": [
     { "entity_type": "person", "entity_id": "uuid-jean",
       "role": "spouse_1", "confidence": 0.99 },
-    { "entity_type": "person", "entity_id": "uuid-elise",
+    { "entity_type": "person", "entity_id": "uuid-odile",
       "role": "spouse_2", "confidence": 0.99 },
     { "entity_type": "person", "entity_id": "uuid-andre",
       "role": "witness",  "confidence": 0.90 },
@@ -661,7 +661,7 @@ An Occupation is a state (not a punctual event) attached to a person, describing
   "title_normalized": "teacher",
 
   "employer": {
-    "name": "École publique de Saint-Denis",
+    "name": "École publique de Saint-Paul",
     "place_id": "place-001"
   },
 
@@ -752,7 +752,7 @@ The Date structure supports partial dates, multiple calendar systems, and uncert
 
 ```json
 {
-  "value": "1923-04-12",
+  "value": "1924-04-17",
   "calendar": "gregorian",
   "precision": "exact",
   "circa": false,
@@ -760,13 +760,13 @@ The Date structure supports partial dates, multiple calendar systems, and uncert
   "note": "Date from birth certificate",
   "alternatives": [
     {
-      "value": "大正12年4月12日",
+      "value": "大正13年4月17日",
       "calendar": "japanese_era",
       "era": "Taisho",
-      "era_year": 12
+      "era_year": 13
     },
     {
-      "value": "כ״ה ניסן תרפ״ג",
+      "value": "י״ג ניסן תרפ״ד",
       "calendar": "hebrew"
     }
   ],
@@ -778,9 +778,9 @@ The Date structure supports partial dates, multiple calendar systems, and uncert
 
 | Value | Meaning | Example |
 |---|---|---|
-| `exact` | Full date known | `1923-04-12` |
-| `month` | Month and year known | `1923-04` |
-| `year` | Year only | `1923` |
+| `exact` | Full date known | `1924-04-17` |
+| `month` | Month and year known | `1924-04` |
+| `year` | Year only | `1924` |
 | `decade` | Approximate decade | `1920s` |
 | `quarter_century` | ~25 year range | `early 1920s` |
 | `century` | Century only | `19th century` |
@@ -828,9 +828,9 @@ A Place is a reusable geographic entity with multilingual names and country hist
   "axgf_version": "1.0",
 
   "names": [
-    { "lang": "fr", "value": "Saint-Denis",          "is_primary": true },
-    { "lang": "cr", "value": "Saint-Denis",          "is_primary": false },
-    { "lang": "en", "value": "Saint-Denis, Réunion", "is_primary": false }
+    { "lang": "fr", "value": "Saint-Paul",          "is_primary": true },
+    { "lang": "cr", "value": "Saint-Paul",          "is_primary": false },
+    { "lang": "en", "value": "Saint-Paul, Réunion", "is_primary": false }
   ],
 
   "type": "city",
@@ -875,7 +875,7 @@ A Source is an evidence record that justifies factual claims. Every fact should 
   "axgf_version": "1.0",
   "created_at": "2026-05-01T10:00:00Z",
 
-  "title": "Acte de naissance n°47 — Jean Pierre-Léonard",
+  "title": "Acte de naissance n°52 — Jean Lefèvre-Morin",
   "source_type": "birth_certificate",
   "reliability": "primary",
   "confidence": 0.98,
@@ -883,12 +883,12 @@ A Source is an evidence record that justifies factual claims. Every fact should 
 
   "repository": {
     "name": "Archives départementales de La Réunion",
-    "location": "Saint-Denis, La Réunion",
+    "location": "Saint-Paul, La Réunion",
     "url": "https://archives.reunion.fr",
-    "reference": "5MI/47/1923/0047"
+    "reference": "3E/52/1924/0052"
   },
 
-  "date": { "value": "1923-04-12", "precision": "exact" },
+  "date": { "value": "1924-04-17", "precision": "exact" },
   "place_id": "place-001",
 
   "document_id": "doc-001",
@@ -897,8 +897,8 @@ A Source is an evidence record that justifies factual claims. Every fact should 
     {
       "source_id": "src-009",
       "field": "birthdate",
-      "this_value": "1923-04-12",
-      "conflict_value": "1923-04-15",
+      "this_value": "1924-04-17",
+      "conflict_value": "1924-04-20",
       "resolution": "this_preferred",
       "resolution_note": "Original civil register preferred over family Bible"
     }
@@ -962,7 +962,7 @@ A Document is a binary or textual artifact that can be embedded in the bundle an
   "axgf_version": "1.0",
   "created_at": "2026-05-01T10:00:00Z",
 
-  "filename": "acte-naissance-jean-1923.pdf",
+  "filename": "acte-naissance-jean-1924.pdf",
   "mime_type": "application/pdf",
   "document_type": "birth_certificate",
   "status": "present",
@@ -973,7 +973,7 @@ A Document is a binary or textual artifact that can be embedded in the bundle an
     "sha256": "a3f8c2d1e4b5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1"
   },
 
-  "date": { "value": "1923-04-12", "precision": "exact" },
+  "date": { "value": "1924-04-17", "precision": "exact" },
   "place_id": "place-001",
   "language": "fr",
 
@@ -991,7 +991,7 @@ A Document is a binary or textual artifact that can be embedded in the bundle an
   },
 
   "ai": {
-    "summary": "Birth certificate for Jean Pierre-Léonard, born 12 April 1923 in Saint-Denis.",
+    "summary": "Birth certificate for Jean Lefèvre-Morin, born 17 April 1924 in Saint-Paul.",
     "suggested_links": [
       {
         "entity_type": "person",
@@ -1002,7 +1002,7 @@ A Document is a binary or textual artifact that can be embedded in the bundle an
     ]
   },
 
-  "caption": "Acte de naissance — Jean Pierre-Léonard — 1923",
+  "caption": "Acte de naissance — Jean Lefèvre-Morin — 1924",
   "note": "Légèrement endommagé en bas de page, date lisible"
 }
 ```
@@ -1068,30 +1068,30 @@ The optional `vault/` directory contains Markdown narrative pages per entity, de
 **vault/wiki/persons/{uuid}.md format:**
 
 ```markdown
-# Jean Pierre-Léonard [id:550e8400]
+# Jean Lefèvre-Morin [id:550e8400]
 
-**Birth**: 12 April 1923 (exact) — Saint-Denis, Réunion  
+**Birth**: 17 April 1924 (exact) — Saint-Paul, Réunion  
 **Death**: 3 March 1987 — Paris 14e, France  
 **Generation**: 2 (from known root)
 
 ## Identity
 - Gender: Male
-- Birth name: Jean-Baptiste Pierre-Léonard (source: birth certificate 1923)
+- Birth name: Jean-Baptiste Lefèvre-Morin (source: birth certificate 1924)
 
 ## Direct Relations
-- Son of: Henri Pierre-Léonard [id:uuid-henri] (1880–1952)
+- Son of: Henri Lefèvre-Morin [id:uuid-henri] (1880–1952)
 - Son of: Marguerite Fontaine [id:uuid-marguerite] (1885–1960)
-- Husband of: Élise Bernard [id:uuid-elise] — from 1948
+- Husband of: Odile Ferrand [id:uuid-odile] — from 1948
 - Father of: Robert [id:...], Laurent [id:...], Karin [id:...]
 
 ## Affiliations
 - Godfather of: Jules Martin [id:uuid-jules] (from 1950)
 
 ## Occupations
-- Primary school teacher (1948–1978) — Saint-Denis, Réunion
+- Primary school teacher (1948–1978) — Saint-Paul, Réunion
 
 ## AI Hypotheses
-> ⚠ PENDING — Possible sibling: Pierre Pierre-Léonard (1920-?) — score: 0.87
+> ⚠ PENDING — Possible sibling: Pierre Lefèvre-Morin (1920-?) — score: 0.87
 > Evidence: same surname, same birthplace, compatible parents
 
 ## Notes
@@ -1263,10 +1263,10 @@ All `id` fields MUST be lowercase UUID v4: `xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
   "version_num": 1,
   "identity": {
     "name": {
-      "display": "Jean Pierre-Léonard",
+      "display": "Jean Lefèvre-Morin",
       "components": [
         { "type": "given_name",  "value": "Jean",            "order": 1 },
-        { "type": "family_name", "value": "Pierre-Léonard",  "order": 2 }
+        { "type": "family_name", "value": "Lefèvre-Morin",  "order": 2 }
       ]
     },
     "gender":    { "value": "M" },

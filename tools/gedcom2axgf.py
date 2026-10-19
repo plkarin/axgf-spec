@@ -252,7 +252,7 @@ def _simple_date(text):
 
 def parse_name(name_rec):
     ## @brief  Convert a GEDCOM NAME record to an AXGF name object.
-    ## @param  name_rec NAME Record ("Jean /Pierre-Léonard/" + subtags).
+    ## @param  name_rec NAME Record ("Jean /Lefèvre-Morin/" + subtags).
     ## @return AXGF name dict.
     raw = name_rec.value.strip()
     match = re.match(r"^([^/]*)/([^/]*)/(.*)$", raw)

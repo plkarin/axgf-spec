@@ -21,13 +21,13 @@
   },
   "birth": {
     "date": {
-      "value": "1923-04-12",
+      "value": "1924-04-17",
       "calendar": "gregorian",
       "precision": "exact",
       "confidence": 0.98,
       "alternatives": [
-        { "value": "大正12年4月12日", "calendar": "japanese_era", "era": "Taisho", "era_year": 12 },
-        { "value": "כ״ה ניסן תרפ״ג",  "calendar": "hebrew" }
+        { "value": "大正13年4月17日", "calendar": "japanese_era", "era": "Taisho", "era_year": 13 },
+        { "value": "י״ג ניסן תרפ״ד",  "calendar": "hebrew" }
       ]
     }
   }

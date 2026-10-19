@@ -91,10 +91,10 @@ Plus: **OCCUPATION** (career state), **SOURCE** (evidence), **PLACE** (reusable 
   "version_num": 1,
   "identity": {
     "name": {
-      "display": "Jean Pierre-Léonard",
+      "display": "Jean Lefèvre-Morin",
       "components": [
         { "type": "given_name",  "value": "Jean",           "order": 1 },
-        { "type": "family_name", "value": "Pierre-Léonard", "order": 2 }
+        { "type": "family_name", "value": "Lefèvre-Morin", "order": 2 }
       ]
     },
     "gender":     { "value": "M" },
@@ -103,7 +103,7 @@ Plus: **OCCUPATION** (career state), **SOURCE** (evidence), **PLACE** (reusable 
   },
   "birth": {
     "date": {
-      "value": "1923-04-12",
+      "value": "1924-04-17",
       "calendar": "gregorian",
       "precision": "exact",
       "confidence": 0.98
@@ -161,13 +161,13 @@ Plus: **OCCUPATION** (career state), **SOURCE** (evidence), **PLACE** (reusable 
 ```json
 {
   "date": {
-    "value": "1923-04-12",
+    "value": "1924-04-17",
     "calendar": "gregorian",
     "precision": "exact",
     "confidence": 0.98,
     "alternatives": [
-      { "value": "大正12年4月12日", "calendar": "japanese_era", "era": "Taisho", "era_year": 12 },
-      { "value": "כ״ה ניסן תרפ״ג",  "calendar": "hebrew" }
+      { "value": "大正13年4月17日", "calendar": "japanese_era", "era": "Taisho", "era_year": 13 },
+      { "value": "י״ג ניסן תרפ״ד",  "calendar": "hebrew" }
     ]
   }
 }

@@ -7,10 +7,10 @@
   "version_num": 1,
   "identity": {
     "name": {
-      "display": "Jean Pierre-Léonard",
+      "display": "Jean Lefèvre-Morin",
       "components": [
         { "type": "given_name",  "value": "Jean",           "order": 1 },
-        { "type": "family_name", "value": "Pierre-Léonard", "order": 2 }
+        { "type": "family_name", "value": "Lefèvre-Morin", "order": 2 }
       ]
     },
     "gender":     { "value": "M" },
@@ -19,7 +19,7 @@
   },
   "birth": {
     "date": {
-      "value": "1923-04-12",
+      "value": "1924-04-17",
       "calendar": "gregorian",
       "precision": "exact",
       "confidence": 0.98
