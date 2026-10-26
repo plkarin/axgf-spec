@@ -252,7 +252,7 @@ Identity and civil status · Morphology · Biometrics · Health · Genomics · D
 |---|---|---|
 | **1.0** | June 2026 | Stable core — entities, i18n, confidence, documents. Extended, unchanged, by 1.1 |
 | **1.1.0** | October 2026 | **Frozen:** extended person profile — claims, series, closed vocabularies, sensitive classes, lineage, typed relations, digital legacy. Bundles written against it stay valid; changes go to 1.2 |
-| 1.2 | Q4 2026 | Place authority file, Wikidata integration spec |
+| 1.2 | Q4 2026 | Place authority file, Wikidata integration spec; what an absent `visibility` means ([proposal 0001](./proposals/0001-absent-visibility.md)) |
 | 2.0 | 2027 | Binary format option, streaming support for large trees |
 
 ---
