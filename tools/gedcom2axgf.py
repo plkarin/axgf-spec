@@ -289,14 +289,22 @@ def parse_name(name_rec):
 # Converter
 # ---------------------------------------------------------------------------
 
+## GEDCOM's restriction notice (RESN) as an AXGF visibility. `locked` is an
+## edit lock, not a visibility, and sets none.
+RESN_VISIBILITY = {"privacy": "private", "confidential": "private"}
+
+
 class Converter:
     ## @brief GEDCOM -> AXGF conversion engine for one or more input files.
 
     def __init__(self, default_confidence=0.8, lang="und",
-                 emit_parent_links=False):
+                 emit_parent_links=False, visibility=None):
         self.default_confidence = default_confidence
         self.lang = lang
         self.emit_parent_links = emit_parent_links
+        ## A visibility chosen for every person the file does not restrict
+        ## itself, or None to state none (proposals/0001).
+        self.visibility = visibility
         self.now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
         self.persons = {}
@@ -500,11 +508,20 @@ class Converter:
         gender = {"M": "M", "F": "F", "X": "NB"}.get(sex, "U")
 
         death_node = rec.first("DEAT")
+        # Died, as GEDCOM says it: a death, a burial or a cremation.
+        died = any(rec.first(t) for t in ("DEAT", "BURI", "CREM"))
         person["identity"] = {
             "name": primary,
             "gender": {"value": gender},
-            "is_living": death_node is None,
-            "visibility": "members"}
+            "is_living": not died}
+        # Visibility only where somebody decided one (proposals/0001): the
+        # record's own restriction notice, or the --visibility the person
+        # running the conversion chose. GEDCOM says nothing otherwise, and
+        # an absent visibility is read by the rule of the proposal.
+        visibility = RESN_VISIBILITY.get(rec.sub_value("RESN").strip().lower(),
+                                         self.visibility)
+        if visibility:
+            person["identity"]["visibility"] = visibility
 
         if len(names) > 1:
             person["identity"]["names"] = []
@@ -779,6 +796,11 @@ def main(argv=None):
     parser.add_argument("--emit-parent-links", action="store_true",
                         help="Also emit parent_of Link entities in addition "
                              "to Family children")
+    parser.add_argument("--visibility", default=None,
+                        choices=["public", "members", "contributors", "private"],
+                        help="Visibility stamped on every person whose record "
+                             "has no RESN (default: none stated; a reader "
+                             "applies the rule of proposals/0001)")
     parser.add_argument("--schema", default=None,
                         help="Path to axgf-1.0.schema.json to embed in the "
                              "bundle (looked up next to this script when "
@@ -795,7 +817,8 @@ def main(argv=None):
 
     converter = Converter(default_confidence=args.default_confidence,
                           lang=args.lang,
-                          emit_parent_links=args.emit_parent_links)
+                          emit_parent_links=args.emit_parent_links,
+                          visibility=args.visibility)
 
     for input_path in args.inputs:
         if not Path(input_path).is_file():
