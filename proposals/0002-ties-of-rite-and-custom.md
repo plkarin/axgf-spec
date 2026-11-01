@@ -47,7 +47,9 @@ A rite is not descent. A milk sister is not a sister in `Family.children`,
 and a hānai child stays a Link unless the family records a customary adoption
 as `lineage: adoptive` or `foster`. The format keeps a family's structure and
 a tradition's ties apart, as readers expect: a reader draws the first as a
-family and the second beside it.
+family and the second beside it. How a reader places these ties among a
+person's relatives, and draws them, is in [KINSHIP.md](../KINSHIP.md) §5
+and §6.
 
 ## Proposed text (1.2)
 
@@ -82,7 +84,7 @@ SHOULD set `bidirectional: true`.
 `godparent` and `godchild` remain the general terms, for a record that does
 not say at which rite.
 
-### §5.13.3 Link: `tradition`
+### Link (1.0 §4.4): `tradition`
 
 A Link MAY carry `tradition`, a closed vocabulary that says which tradition
 the tie belongs to:
@@ -93,7 +95,7 @@ the tie belongs to:
 It is for grouping and for display. It is not a judgement on anyone's
 belonging, and it is OPTIONAL.
 
-### §5.13.4 Words
+### Words: `label` and `label_reverse`
 
 `label` and `label_reverse` keep the words of the source: «matka chrzestna»,
 «أخت من الرضاعة», «ndoyi». A reader SHOULD show them beside its own word for

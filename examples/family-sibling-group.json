@@ -1,0 +1,11 @@
+{
+  "id": "dddd1234-e29b-41d4-a716-446655440004",
+  "type": "family",
+  "axgf_version": "1.0",
+  "children": [
+    { "person_id": "66666666-6666-4666-8666-666666666661", "birth_order": 1, "confidence": 0.8 },
+    { "person_id": "66666666-6666-4666-8666-666666666662", "birth_order": 2, "confidence": 0.8 },
+    { "person_id": "66666666-6666-4666-8666-666666666663", "birth_order": 3, "confidence": 0.8 }
+  ],
+  "notes": "Three children of one household in the 1851 census; the parents are not named."
+}

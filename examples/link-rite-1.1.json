@@ -1,0 +1,20 @@
+{
+  "id": "cccc1234-e29b-41d4-a716-446655440003",
+  "type": "link",
+  "axgf_version": "1.1",
+  "from": {
+    "entity_type": "person",
+    "entity_id": "77777777-7777-4777-8777-777777777777"
+  },
+  "to": {
+    "entity_type": "person",
+    "entity_id": "44444444-4444-4444-8444-444444444444"
+  },
+  "label": "أخت من الرضاعة",
+  "label_reverse": "أخ من الرضاعة",
+  "category": "spiritual",
+  "relation": "other",
+  "bidirectional": true,
+  "confidence": 0.8,
+  "note": "Milk siblings: nursed by the same woman. AXGF 1.1 has no term for the tie, so it is stored as other and the words carry it (proposal 0002)."
+}

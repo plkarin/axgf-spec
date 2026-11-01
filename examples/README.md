@@ -15,6 +15,8 @@ files use 1.1 attributes and validate against the 1.1 schema only.
 | [`person-profile-1.1.json`](./person-profile-1.1.json) | A deceased person with claims in most of the 1.1 profile groups — dated series, closed vocabularies, sensitive-class attributes, a per-person `class_visibility`, and an artefact reference ([SPEC_1.1](../SPEC_1.1.md) §8) |
 | [`family-lineage-1.1.json`](./family-lineage-1.1.json) | A family whose children carry `lineage` — a stepchild and a biological child of the same union (§5.13) |
 | [`link-relation-1.1.json`](./link-relation-1.1.json) | A godparent Link typed with `relation` beside its words in `label` and `label_reverse` (§5.13) |
+| [`link-rite-1.1.json`](./link-rite-1.1.json) | A tie of rite 1.1 has no term for: milk siblings, mutual (`bidirectional`), stored as `relation: other` with its words in Arabic ([KINSHIP.md](../KINSHIP.md) §5; [proposal 0002](../proposals/0002-ties-of-rite-and-custom.md) would name it `milk_sibling`) |
+| [`family-sibling-group.json`](./family-sibling-group.json) | A sibling group: three children of one household whose parents are unknown, a Family with no `union` ([SPEC_1.0](../SPEC_1.0.md) §4.2.3). A reader takes them as brothers and sisters ([KINSHIP.md](../KINSHIP.md) §1) |
 
 The README shows the `identity.name` block alone for the Japanese and Hebrew
 cases; a person also requires `id`, `type`, `axgf_version`, and

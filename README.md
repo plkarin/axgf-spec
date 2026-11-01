@@ -14,7 +14,7 @@
 
 **Current version: 1.1.0** (frozen, October 2026) — [1.0](./SPEC_1.0.md), the core, plus [1.1](./SPEC_1.1.md), the person profile it adds. Every 1.0 bundle is a valid 1.1.0 bundle.
 
-[Specification 1.0 →](./SPEC_1.0.md) · [1.1: person profile →](./SPEC_1.1.md) · [JSON Schema 1.0](./schema/axgf-1.0.schema.json) · [1.1](./schema/axgf-1.1.schema.json) · [Data catalogue →](./DATA.md) · [Examples →](./examples/) · [Discuss →](https://github.com/plkarin/axgf-spec/issues)
+[Specification 1.0 →](./SPEC_1.0.md) · [1.1: person profile →](./SPEC_1.1.md) · [JSON Schema 1.0](./schema/axgf-1.0.schema.json) · [1.1](./schema/axgf-1.1.schema.json) · [Data catalogue →](./DATA.md) · [Kinship →](./KINSHIP.md) · [Examples →](./examples/) · [Discuss →](https://github.com/plkarin/axgf-spec/issues)
 
 </div>
 
@@ -48,6 +48,7 @@ GEDCOM 5.5.1 (1999) and even GEDCOM 7 (2021) were designed around a person-centr
 | Sensitive data governed by class | ❌ | ✅ 1.1: health · biometrics · genomics · legal, withheld and exported per class |
 | Adoptive, foster and step lineage | ⚠️ `PEDI` | ✅ 1.1: `lineage` on each child of a family |
 | Typed non-family relations | ⚠️ `ASSO`/`RELA` free text | ✅ 1.1: Link `relation` vocabulary |
+| Godparents and the ties of rite of every tradition | ⚠️ `ASSO`/`RELA` free text; GEDCOM 7 `ROLE GODP` | ✅ 1.1: a godparent Link with its words · proposed for 1.2: milk kinship, kafala, compadre, kum, hānai… 19 terms across ten traditions ([proposal 0002](./proposals/0002-ties-of-rite-and-custom.md)) |
 | 3D models, voice corpora, trained models | ❌ | ✅ 1.1: artefacts held as Documents, with consent |
 
 ---
@@ -74,6 +75,12 @@ AXGF is built around **Philosophy C**: four independent first-class entities.
 **LINK** — first-class typed relationship with temporal validity and confidence.
 
 Plus: **OCCUPATION** (career state), **SOURCE** (evidence), **PLACE** (reusable geography), **DOCUMENT** (embedded binary).
+
+### Kinship is read, not stored
+
+A bundle records near facts only: who is a child of which union, with which `lineage`, who is partnered with whom, and which Links tie people. A cousin twice removed, a half-uncle or a sister-in-law is a path through those facts, and the reader names it. [KINSHIP.md](./KINSHIP.md) says how, so that two programs give one bundle the same answer: descent, half or full, adoption, marriage, care, the degree of kinship, privacy, and words in every language.
+
+Ties of rite and custom (a godmother, milk siblings, the kum, the compadre, a namesake, a hānai child) are Links. They stand beside the family and never enter its structure: a godchild of an uncle is not a cousin. Readers draw them apart, dotted for instance, with the source's own words. [Proposal 0002](./proposals/0002-ties-of-rite-and-custom.md) asks 1.2 to name them.
 
 ---
 
@@ -252,7 +259,7 @@ Identity and civil status · Morphology · Biometrics · Health · Genomics · D
 |---|---|---|
 | **1.0** | June 2026 | Stable core — entities, i18n, confidence, documents. Extended, unchanged, by 1.1 |
 | **1.1.0** | October 2026 | **Frozen:** extended person profile — claims, series, closed vocabularies, sensitive classes, lineage, typed relations, digital legacy. Bundles written against it stay valid; changes go to 1.2 |
-| 1.2 | Q4 2026 | Place authority file, Wikidata integration spec; what an absent `visibility` means ([proposal 0001](./proposals/0001-absent-visibility.md)) |
+| 1.2 | Q4 2026 | Place authority file, Wikidata integration spec; what an absent `visibility` means ([proposal 0001](./proposals/0001-absent-visibility.md)); ties of rite and custom in `link_relation` ([proposal 0002](./proposals/0002-ties-of-rite-and-custom.md)) |
 | 2.0 | 2027 | Binary format option, streaming support for large trees |
 
 ---
@@ -283,7 +290,7 @@ Changes to the format are made here first and only then implemented downstream. 
 | Project | Language | Status |
 |---|---|---|
 | [axgf-lib](https://github.com/plkarin/axgf-lib) | Rust | Reference library, AXGF 1.0 and 1.1 — published on crates.io as [`axgf-rs`](https://crates.io/crates/axgf-rs), with the `axgf` command-line tool |
-| [axgf-cms](https://github.com/plkarin/axgf-cms) | Rust | Reference web application — a self-hosted site that browses and edits one `.axgf` bundle |
+| [axgf-cms](https://github.com/plkarin/axgf-cms) | Rust | Reference web application — a self-hosted site that browses and edits one `.axgf` bundle, and says how any two people in it are related ([KINSHIP.md](./KINSHIP.md)) |
 | *Your project here* | — | Open a PR to list yours |
 
 ---
