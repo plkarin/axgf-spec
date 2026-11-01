@@ -256,6 +256,10 @@ Rose and Lily are sisters to each other, and related to nobody else.
   are not married to each other. When the mother of each child is known,
   one Family per couple lets every reader find the half-siblings and the
   marriages.
+- **A sibling group beside the family with the parents.** An import often
+  keeps both: the same children in a Family with a union and in a sibling
+  group. A reader SHOULD give the way through the recorded parents once,
+  and take from the group only the children it alone holds.
 - **People the bundle does not hold.** A partial bundle (1.0 §2.2) can name
   a person in a Family without carrying them. They keep their place in a
   path, unnamed, as in §8.
