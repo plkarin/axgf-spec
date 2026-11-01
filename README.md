@@ -48,6 +48,8 @@ GEDCOM 5.5.1 (1999) and even GEDCOM 7 (2021) were designed around a person-centr
 | Sensitive data governed by class | ❌ | ✅ 1.1: health · biometrics · genomics · legal, withheld and exported per class |
 | Adoptive, foster and step lineage | ⚠️ `PEDI` | ✅ 1.1: `lineage` on each child of a family |
 | Typed non-family relations | ⚠️ `ASSO`/`RELA` free text | ✅ 1.1: Link `relation` vocabulary |
+| Polygamous unions | ❌ one `FAM` per couple, nothing says they are concurrent | ✅ union type `polygamous` · proposed for 1.2: the primary person, each spouse's own marriage, each child's parents ([proposal 0003](./proposals/0003-polygamous-unions.md)) |
+| Coats of arms and family emblems | ❌ | ✅ documents on a Family · proposed for 1.2: a `coat_of_arms` type, the role `emblem`, the bundle's own emblem ([proposal 0004](./proposals/0004-family-emblems.md)) |
 | Godparents and the ties of rite of every tradition | ⚠️ `ASSO`/`RELA` free text; GEDCOM 7 `ROLE GODP` | ✅ 1.1: a godparent Link with its words · proposed for 1.2: milk kinship, kafala, compadre, kum, hānai… 19 terms across ten traditions ([proposal 0002](./proposals/0002-ties-of-rite-and-custom.md)) |
 | 3D models, voice corpora, trained models | ❌ | ✅ 1.1: artefacts held as Documents, with consent |
 
@@ -259,7 +261,7 @@ Identity and civil status · Morphology · Biometrics · Health · Genomics · D
 |---|---|---|
 | **1.0** | June 2026 | Stable core — entities, i18n, confidence, documents. Extended, unchanged, by 1.1 |
 | **1.1.0** | October 2026 | **Frozen:** extended person profile — claims, series, closed vocabularies, sensitive classes, lineage, typed relations, digital legacy. Bundles written against it stay valid; changes go to 1.2 |
-| 1.2 | Q4 2026 | Place authority file, Wikidata integration spec; what an absent `visibility` means ([proposal 0001](./proposals/0001-absent-visibility.md)); ties of rite and custom in `link_relation` ([proposal 0002](./proposals/0002-ties-of-rite-and-custom.md)) |
+| 1.2 | Q4 2026 | Place authority file, Wikidata integration spec; what an absent `visibility` means ([proposal 0001](./proposals/0001-absent-visibility.md)); ties of rite and custom in `link_relation` ([proposal 0002](./proposals/0002-ties-of-rite-and-custom.md)); polygamous unions, one marriage per spouse ([proposal 0003](./proposals/0003-polygamous-unions.md)); a family's emblem and the archive's ([proposal 0004](./proposals/0004-family-emblems.md)) |
 | 2.0 | 2027 | Binary format option, streaming support for large trees |
 
 ---

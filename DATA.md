@@ -362,7 +362,7 @@ Where each relationship is recorded ([§5.13.1](./SPEC_1.1.md#5131-attributes)):
 
 - **Parents** — the partners of a Family in which the person is a child; the child's `lineage` says biological, adoptive, foster, step or guardians.
 - **Siblings and birth order** — the other children of the same Family, with `birth_order`, even when the Family has no `union` (a sibling group, [1.0 §4.2.3](./SPEC_1.0.md#423-sibling-group-parents-unknown)).
-- **Spouses, marriages, divorces** — the Family's `union`: its partners, type, start and end.
+- **Spouses, marriages, divorces** — the Family's `union`: its partners, type, start and end. A polygamous union is one marriage per spouse ([proposal 0003](./proposals/0003-polygamous-unions.md)).
 - **Children** — the children of the Families in which the person is a partner.
 - **Godparents, witnesses, officiants, employers, business partners, friends** — Links, typed by `relation` beside the source's own word in `label`.
 - **Everyone else** — read, not stored: a cousin, a great-aunt or a sister-in-law is a path through the facts above. [KINSHIP.md](./KINSHIP.md) says how a reader names it, and where the ties of rite and custom stand ([proposal 0002](./proposals/0002-ties-of-rite-and-custom.md) proposes terms for them in 1.2).

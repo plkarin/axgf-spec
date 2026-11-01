@@ -43,6 +43,8 @@ does what this page describes (its ADR 0020).
 | By birth | `lineage` absent, `biological` or `unknown` | Descent. An absent `lineage` is the 1.0 reading: the record says nothing else. |
 | By adoption | `lineage: adoptive` | Descent, through an adoption. |
 | By care | `lineage: foster`, `guardianship`, `step` | A parent's place, not descent (§4). |
+| A polygamous union | `union.type: polygamous` (1.0 §4.2.2, [proposal 0003](./proposals/0003-polygamous-unions.md)) | One marriage per spouse: the primary person and each spouse are partners, and the spouses are co-spouses, never partners. Each marriage has its own `unions[]` entry. |
+| A child's parents | `children[].parent_ids` ([proposal 0003](./proposals/0003-polygamous-unions.md)) | When present, the child's parents in the union. In a polygamous union without it: the primary person, and a spouse the record does not name. |
 | A sibling group | a Family with `children` and no `union` (1.0 §4.2.3) | The children are brothers and sisters. They meet at parents nobody recorded, and nobody is named for them. |
 | A tie | a Link (1.0 §4.4) | Beside the family, never in it (§5). |
 
@@ -64,10 +66,12 @@ The shared ancestors are the **closest** when the two paths meet there and
 nowhere below.
 
 **Full or half.** When both paths come down from the ancestor through the
-same Family, that Family's couple is shared and the relationship is full.
-When they come down through two Families of the ancestor (two unions), only
-that ancestor is shared, and the relationship is half: a half-brother, a
-half-uncle, a half first cousin.
+same marriage, the couple is shared and the relationship is full. When they
+come down through two marriages of the ancestor, only that ancestor is
+shared, and the relationship is half: a half-brother, a half-uncle, a half
+first cousin. Each marriage of a polygamous union counts as its own: the
+children of two wives are half-siblings. When the record does not name a
+child's other parent, a reader SHOULD NOT say full or half.
 
 **Adoption** is descent, and a reader MAY say so ("adoptive sister") when a
 step of the path is an adoption.
@@ -116,6 +120,7 @@ relatives on either side:
 | partner, then the partner's relative | relative by marriage | mother-in-law (the partner's parent), brother-in-law (the partner's brother), stepson (the partner's son, not A's) |
 | relative, then the relative's partner | relative's partner | daughter-in-law (a child's wife), brother-in-law (a sister's husband), stepmother (a parent's wife, not A's mother), "wife of a nephew" |
 | both | relative by marriage | the husband of the partner's sister |
+| partner, then the partner's other spouse in a polygamous union | co-spouse | co-wife, co-husband |
 
 The partner of a partner's relative is far. A reader SHOULD name it only
 when no nearer way exists.
@@ -168,8 +173,8 @@ godmother, and a cousin can be a sister-in-law too. A reader SHOULD give
 every way, the closest first.
 
 The reference application ranks each way by the number of steps on its path
-plus a weight: 0 for descent and a union, 1 for care, 2 for marriage, 3 for
-a tie of rite, 4 for a chain of facts. When two ways rank the same, the
+plus a weight: 0 for descent and a union, 1 for care, 2 for marriage (a
+co-spouse included), 3 for a tie of rite, 4 for a chain of facts. When two ways rank the same, the
 lighter weight comes first. A tie of rite is one step, so it ranks 4, as a
 first cousin does. Godparents are most often aunts, uncles and grandparents,
 and those rank 2 or 3: an aunt who is also a godmother is first an aunt. A
@@ -249,13 +254,15 @@ Rose and Lily are sisters to each other, and related to nobody else.
 - **Sex not recorded.** The neutral word: parent, sibling, cousin.
 - **Couples of one sex.** Both partners are parents of the union's children.
   The words follow each person's own sex.
-- **Polygamous unions.** A union lists all its spouses in `union.persons`,
-  which the schema requires. (The example in 1.0 §4.2.2 writes
-  `primary_person_id` and `unions[]`, which the schema does not define.)
-  One Family cannot say which wife bore which child, nor that two co-wives
-  are not married to each other. When the mother of each child is known,
-  one Family per couple lets every reader find the half-siblings and the
-  marriages.
+- **Polygamous unions** ([proposal 0003](./proposals/0003-polygamous-unions.md)).
+  A union lists all its spouses in `union.persons`, names its primary person
+  in `primary_person_id` and each spouse's own marriage in `unions[]`. A
+  reader that finds no `primary_person_id` MAY take the only member
+  `unions[]` does not name, else the only one whose role, then sex, differs
+  from all the others', else the first listed. A household recorded as one
+  Family per marriage, each typed `polygamous`, reads the same. A union of
+  another type is never read as polygamous, whatever the number of its
+  members.
 - **A sibling group beside the family with the parents.** An import often
   keeps both: the same children in a Family with a union and in a sibling
   group. A reader SHOULD give the way through the recorded parents once,
